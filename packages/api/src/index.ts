@@ -12,7 +12,7 @@ import billingRouter from './billing/router';
 import { errorHandler, notFound, auditLog, generalRateLimiter } from './middleware';
 
 const app = express();
-const PORT = Number(process.env.PORT ?? 3001);
+const PORT = process.env.PORT || 4000;
 
 // ── Security headers ──────────────────────────────────────────────────────────
 // Disable CSP in production so the bundled React SPA can load without inline-
@@ -75,8 +75,8 @@ app.use(notFound);
 app.use(errorHandler);
 
 // ── Start ─────────────────────────────────────────────────────────────────────
-const server = app.listen(PORT, () => {
-  console.log(`[api] Server running on port ${PORT} (${process.env.NODE_ENV ?? 'development'})`);
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 // Graceful shutdown — close Puppeteer browser and DB pool
