@@ -6,7 +6,7 @@
 
 [build]
 builder      = "nixpacks"
-buildCommand = "npm ci && npm run build"
+buildCommand = "npm run build"
 
 [deploy]
 startCommand          = "npm run db:migrate && node packages/api/dist/index.js"
