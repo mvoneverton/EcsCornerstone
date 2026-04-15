@@ -8,4 +8,4 @@ cmds = ["npm install --legacy-peer-deps"]
 cmds = ["npm run build --workspace=packages/api", "npm run build --workspace=packages/web"]
 
 [start]
-cmd = "node packages/api/dist/index.js"
+cmd = "node packages/api/dist/db/migrate.js && node packages/api/dist/index.js"
