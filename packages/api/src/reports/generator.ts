@@ -1,22 +1,22 @@
-import type { Browser } from 'puppeteer';
+import type { Browser } from 'puppeteer-core';
 
 let browserInstance: Browser | null = null;
-let puppeteer: typeof import('puppeteer') | null = null;
+let puppeteer: typeof import('puppeteer-core') | null = null;
 
 /**
- * Lazily load Puppeteer — it requires Node ≥ 16 and a bundled Chromium.
- * In a production Docker container (node:20-alpine) this works out of the box.
- * On Node 14 (local dev) the import will fail; an error is thrown so callers
- * know PDF generation is unavailable in that environment.
+ * Lazily load puppeteer-core. Unlike the full `puppeteer` package it does not
+ * bundle Chromium — instead it expects an executable path supplied via the
+ * PUPPETEER_EXECUTABLE_PATH environment variable (set to the system Chromium
+ * installed by nixpacks on Railway).
  */
-async function getPuppeteer(): Promise<typeof import('puppeteer')> {
+async function getPuppeteer(): Promise<typeof import('puppeteer-core')> {
   if (!puppeteer) {
     try {
-      puppeteer = await import('puppeteer');
+      puppeteer = await import('puppeteer-core');
     } catch {
       throw new Error(
-        'Puppeteer failed to load — PDF generation requires Node ≥ 16. ' +
-        'Run report generation inside the Docker container.'
+        'puppeteer-core failed to load — ensure it is installed and ' +
+        'PUPPETEER_EXECUTABLE_PATH points to a Chromium binary.'
       );
     }
   }
@@ -31,8 +31,17 @@ async function getBrowser(): Promise<Browser> {
   const pptr = await getPuppeteer();
 
   if (!browserInstance || !browserInstance.connected) {
+    const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+    if (!executablePath) {
+      throw new Error(
+        'PUPPETEER_EXECUTABLE_PATH is not set. ' +
+        'Set it to the path of the system Chromium binary (e.g. /run/current-system/sw/bin/chromium).'
+      );
+    }
+
     browserInstance = await pptr.launch({
       headless: true,
+      executablePath,
       args: [
         '--no-sandbox',                 // required in Docker/CI environments
         '--disable-setuid-sandbox',
