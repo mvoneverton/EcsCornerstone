@@ -12,7 +12,7 @@ import billingRouter from './billing/router';
 import { errorHandler, notFound, auditLog, generalRateLimiter } from './middleware';
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = Number(process.env.PORT) || 4000;
 
 // ── Security headers ──────────────────────────────────────────────────────────
 // Disable CSP in production so the bundled React SPA can load without inline-
