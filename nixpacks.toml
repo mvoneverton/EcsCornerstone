@@ -2,7 +2,7 @@
 nixPkgs = ["nodejs_20", "chromium"]
 
 [phases.install]
-cmds = ["npm ci --workspace=packages/api --workspace=packages/web"]
+cmds = ["npm install --legacy-peer-deps"]
 
 [phases.build]
 cmds = ["npm run build --workspace=packages/api", "npm run build --workspace=packages/web"]
