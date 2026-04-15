@@ -1,0 +1,79 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: ecs_postgres
+    environment:
+      POSTGRES_USER: ecscornerstone
+      POSTGRES_PASSWORD: devpassword
+      POSTGRES_DB: ecscornerstone
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ecscornerstone']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: ecs_redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./packages/api
+      dockerfile: Dockerfile.dev
+    container_name: ecs_api
+    ports:
+      - '3001:3001'
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DATABASE_URL: postgresql://ecscornerstone:devpassword@postgres:5432/ecscornerstone
+      REDIS_URL: redis://redis:6379
+      JWT_ACCESS_SECRET: dev-access-secret-change-in-production-min-32
+      JWT_REFRESH_SECRET: dev-refresh-secret-change-in-production-min-32
+      JWT_ACCESS_EXPIRY: 15m
+      JWT_REFRESH_EXPIRY: 30d
+      CORS_ORIGIN: http://localhost:5173
+      APP_URL: http://localhost:5173
+    volumes:
+      - ./packages/api/src:/app/src
+      - ./packages/api/tests:/app/tests
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./packages/web
+      dockerfile: Dockerfile.dev
+    container_name: ecs_web
+    ports:
+      - '5173:5173'
+    environment:
+      VITE_API_URL: http://localhost:3001/api
+    volumes:
+      - ./packages/web/src:/app/src
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:

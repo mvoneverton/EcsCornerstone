@@ -1,0 +1,42 @@
+# ── Railway deployment configuration ─────────────────────────────────────────
+# Single service: the API builds both packages and serves the React SPA as
+# static files.  PostgreSQL and Redis are added via Railway's plugin dashboard.
+#
+# Docs: https://docs.railway.app/reference/config-as-code
+
+[build]
+builder      = "nixpacks"
+buildCommand = "npm ci && npm run build"
+
+[deploy]
+startCommand          = "npm run db:migrate && node packages/api/dist/index.js"
+healthcheckPath       = "/api/health"
+healthcheckTimeout    = 300
+restartPolicyType     = "on_failure"
+restartPolicyMaxRetries = 10
+
+# ── Environment variable notes ────────────────────────────────────────────────
+# Railway injects $DATABASE_URL and $REDIS_URL automatically when you add the
+# PostgreSQL and Redis plugins.  All other variables must be added manually in
+# the Railway dashboard under Service → Variables.
+#
+# Required variables (see packages/api/.env.staging.example for the full list):
+#   NODE_ENV=production
+#   PORT                     ← Railway sets this automatically
+#   JWT_SECRET
+#   JWT_REFRESH_SECRET
+#   SENDGRID_API_KEY
+#   SENDGRID_FROM_EMAIL
+#   SENDGRID_FROM_NAME
+#   AWS_ACCESS_KEY_ID
+#   AWS_SECRET_ACCESS_KEY
+#   AWS_REGION
+#   AWS_S3_BUCKET
+#   STRIPE_SECRET_KEY
+#   STRIPE_WEBHOOK_SECRET
+#   STRIPE_PRICE_STARTER_MONTHLY
+#   STRIPE_PRICE_STARTER_ANNUALLY
+#   STRIPE_PRICE_GROWTH_MONTHLY
+#   STRIPE_PRICE_GROWTH_ANNUALLY
+#   FRONTEND_URL             ← set to the Railway public URL after first deploy
+#   PUPPETEER_SKIP_DOWNLOAD=true

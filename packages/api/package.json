@@ -1,0 +1,51 @@
+{
+  "name": "@ecscornerstone/api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only --exit-child src/index.ts",
+    "build": "tsc --project tsconfig.json",
+    "start": "node dist/index.js",
+    "test": "node_modules/.bin/jest --forceExit",
+    "test:watch": "node_modules/.bin/jest --watch",
+    "test:coverage": "node_modules/.bin/jest --coverage --forceExit",
+    "db:migrate": "ts-node src/db/migrate.ts",
+    "db:seed": "ts-node src/db/seed.ts",
+    "db:seed:staging": "ts-node src/db/seed-staging.ts",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.490.0",
+    "@aws-sdk/s3-request-presigner": "^3.490.0",
+    "@sendgrid/mail": "^8.1.0",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.3",
+    "puppeteer": "^21.7.0",
+    "redis": "^4.6.12",
+    "stripe": "^14.14.0",
+    "uuid": "^9.0.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^27.5.2",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/node": "^20.11.0",
+    "@types/pg": "^8.10.9",
+    "@types/uuid": "^9.0.7",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.5",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3"
+  }
+}

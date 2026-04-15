@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Serif+Display:ital@0;1&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── ECS Brand color tokens ────────────────────────────────────────────────── */
+:root {
+  --navy-950:  #0A1E3D;   /* darkest navy  */
+  --navy-900:  #1A3A5C;   /* primary navy  */
+  --gold-500:  #D4AF37;   /* gold primary  */
+  --gold-400:  #C9A961;   /* gold warm     */
+  --blue-gray: #8B9DB8;   /* blue-gray     */
+}
+
+@layer base {
+  body {
+    @apply font-sans text-gray-800 antialiased;
+  }
+}
+
+@layer utilities {
+  .auth-card {
+    @apply bg-white rounded-xl shadow-lg border border-gray-100 px-8 py-10;
+  }
+}
