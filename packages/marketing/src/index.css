@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Brand tokens ──────────────────────────────────────────── */
+:root {
+  --navy-950: #0A1E3D;
+  --navy-900: #1A3A5C;
+  --navy-800: #2A4D73;
+  --navy-700: #3A6491;
+  --navy-100: #EEF3F8;
+  --navy-50:  #F7F9FC;
+  --gold-500: #D4AF37;
+  --gold-400: #C9A961;
+  --gold-100: #F7F0DC;
+  --blue-gray: #8B9DB8;
+  --white:     #FFFFFF;
+  --gray-100:  #F1F5F9;
+}
+
+/* ── Base ───────────────────────────────────────────────────── */
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply text-navy-900 bg-white;
+  }
+
+  h1, h2, h3 {
+    @apply font-serif;
+  }
+}
+
+/* ── Typography utilities ───────────────────────────────────── */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

@@ -74,6 +74,21 @@ services:
       - api
     restart: unless-stopped
 
+  marketing:
+    build:
+      context: ./packages/marketing
+      dockerfile: Dockerfile.dev
+    container_name: ecs_marketing
+    ports:
+      - '3002:3002'
+    environment:
+      VITE_API_URL: http://localhost:3001
+    volumes:
+      - ./packages/marketing/src:/app/src
+    depends_on:
+      - api
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   redis_data:

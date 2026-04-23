@@ -7,6 +7,7 @@ import { Button } from '../../../components/ui/Button';
 import { Badge } from '../../../components/ui/Badge';
 import { Textarea } from '../../../components/ui/Textarea';
 import { ProfileBadge, ProfileScoreBar } from '../../../components/ProfileBadge';
+import { PathUnlockPanel } from '../../../components/admin/PathUnlockPanel';
 import { formatDate, formatDateTime, fullName, initials } from '../../../lib/utils';
 import { invitationStatus, assessmentLabel, assessmentFullName } from '../../../types/admin';
 import type { Person, Assessment, AssessmentResult } from '../../../types/admin';
@@ -350,6 +351,8 @@ export default function PersonDetail() {
           ) : (
             assessments.map((a) => <AssessmentSection key={a.id} assessment={a} personId={person.id} />)
           )}
+
+          <PathUnlockPanel client={person} />
 
           <FacilitatorNotes personId={person.id} initial={person.facilitatorNotes} />
         </div>

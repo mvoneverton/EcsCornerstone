@@ -5,10 +5,11 @@ import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 
-import authRouter    from './auth/router';
-import adminRouter   from './admin/router';
-import assessRouter  from './assess/router';
-import billingRouter from './billing/router';
+import authRouter      from './auth/router';
+import adminRouter     from './admin/router';
+import assessRouter    from './assess/router';
+import billingRouter   from './billing/router';
+import marketingRouter from './marketing/router';
 import { errorHandler, notFound, auditLog, generalRateLimiter } from './middleware';
 
 const app = express();
@@ -35,8 +36,10 @@ app.use(
 app.use(cookieParser());
 
 // ── Body parsing ──────────────────────────────────────────────────────────────
-// Stripe webhooks need the raw body — mount that route BEFORE express.json()
-app.use('/api/billing/webhook', express.raw({ type: 'application/json' }));
+// Webhook routes need the raw body — mount BEFORE express.json()
+app.use('/api/billing/webhook',   express.raw({ type: 'application/json' }));
+app.use('/api/webhooks/stripe',   express.raw({ type: 'application/json' }));
+app.use('/api/webhooks/calendly', express.raw({ type: 'application/json' }));
 app.use(express.json());
 
 // ── General rate limiting ─────────────────────────────────────────────────────
@@ -57,6 +60,7 @@ app.use('/api/auth',    authRouter);
 app.use('/api/admin',   adminRouter);
 app.use('/api/assess',  assessRouter);
 app.use('/api/billing', billingRouter);
+app.use('/api',         marketingRouter);
 
 // ── Static frontend (production only) ────────────────────────────────────────
 // In production the API serves the pre-built React SPA.  The web dist folder
@@ -79,7 +83,26 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-// Graceful shutdown — close Puppeteer browser and DB pool
+// ── In-process cron (set ENABLE_CRON=true to activate) ───────────────────────
+// For production, prefer a dedicated Railway cron service running:
+//   node packages/api/dist/cron/followUpFlag.js  on schedule  0 */6 * * *
+// Set ENABLE_CRON=true only when running without a separate cron service.
+if (process.env.ENABLE_CRON === 'true') {
+  const SIX_HOURS = 6 * 60 * 60 * 1000;
+  import('./cron/followUpFlag').then(({ runFollowUpFlagJob }) => {
+    // Run once on startup, then every 6 hours
+    runFollowUpFlagJob().catch((err: unknown) =>
+      console.error('[cron] initial follow-up flag job failed', err)
+    );
+    setInterval(() => {
+      runFollowUpFlagJob().catch((err: unknown) =>
+        console.error('[cron] follow-up flag job failed', err)
+      );
+    }, SIX_HOURS);
+  }).catch((err: unknown) => console.error('[cron] failed to load follow-up flag module', err));
+}
+
+// ── Graceful shutdown — close Puppeteer browser and DB pool ──────────────────
 async function shutdown(signal: string) {
   console.log(`[api] ${signal} received — shutting down`);
   server.close(async () => {

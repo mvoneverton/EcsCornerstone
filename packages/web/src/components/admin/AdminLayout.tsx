@@ -50,11 +50,9 @@ export function AdminLayout() {
       <aside className="flex w-60 flex-shrink-0 flex-col bg-navy overflow-y-auto">
 
         {/* Logo */}
-        <div className="flex h-16 flex-shrink-0 items-center px-4 border-b border-white/10">
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-lg font-semibold text-white">ECS</span>
-            <span className="text-lg font-light text-navy-200">Cornerstone</span>
-          </div>
+        <div className="flex h-16 flex-shrink-0 items-center gap-3 px-4 border-b border-white/10">
+          <img src="/ecs-logo.svg" alt="ECS Cornerstone" className="h-10 w-auto flex-shrink-0" />
+          <span className="text-sm font-light text-navy-200 leading-tight">ECS Cornerstone</span>
         </div>
 
         {/* Company name */}

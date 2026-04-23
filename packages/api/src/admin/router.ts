@@ -21,6 +21,7 @@ import {
   archivePosition,
 } from './handlers';
 import { adminGetReportUrl } from '../reports/handlers';
+import { unlockClientPath } from './pathHandlers';
 
 const router = Router();
 
@@ -146,6 +147,14 @@ router.get(
   '/reports/:invitationId',
   requireRole('company_admin', 'facilitator'),
   adminGetReportUrl
+);
+
+// ── Client path unlocking (super_admin only) ──────────────────────────────────
+
+router.post(
+  '/clients/:id/unlock-path',
+  requireRole('super_admin', 'company_admin'),
+  unlockClientPath
 );
 
 export default router;
