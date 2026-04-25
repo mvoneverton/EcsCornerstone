@@ -8,10 +8,10 @@
 # ── Service: api ─────────────────────────────────────────────────────────────
 [services.api.build]
 builder      = "nixpacks"
-buildCommand = "npm run build --workspace=packages/api"
+buildCommand = "cd packages/api && npm run build"
 
 [services.api.deploy]
-startCommand            = "npm run db:migrate --workspace=packages/api && node packages/api/dist/index.js"
+startCommand            = "npm --prefix packages/api run db:migrate && node packages/api/dist/index.js"
 healthcheckPath         = "/api/health"
 healthcheckTimeout      = 300
 restartPolicyType       = "on_failure"
@@ -21,7 +21,7 @@ restartPolicyMaxRetries = 10
 # Railway serves the output directory directly — no start command required.
 [services.marketing.build]
 builder      = "nixpacks"
-buildCommand = "npm run build --workspace=packages/marketing"
+buildCommand = "cd packages/marketing && npm run build"
 
 [services.marketing.deploy]
 staticDir = "packages/marketing/dist"
