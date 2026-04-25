@@ -308,7 +308,7 @@ export default function ScanPage() {
         <p className="text-navy-700 leading-relaxed">
           After your Scan, you'll have a clear picture of where AI fits in your business. If you
           want to go deeper — adding the human factor, profiling your team, and building a full
-          implementation roadmap — the ECS AI Assessment is the natural next step. We'll discuss
+          implementation roadmap — the ECS AI Full Assessment is the natural next step. We'll discuss
           that option after your findings call.
         </p>
       </section>

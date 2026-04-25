@@ -327,21 +327,36 @@ export async function joinWaitlist(req: Request, res: Response): Promise<void> {
   );
 
   if (process.env.SENDGRID_API_KEY && process.env.SENDGRID_FROM_EMAIL) {
+    const from = process.env.SENDGRID_FROM_EMAIL;
+
     await sgMail.send({
       to: email,
-      from: process.env.SENDGRID_FROM_EMAIL,
+      from,
       subject: "You're on the ECS Cornerstone waitlist",
       text: [
         `Hi ${firstName},`,
         '',
         "You're on the list. We'll reach out as soon as ECS Cornerstone is available as a standalone platform.",
         '',
-        'In the meantime, Cornerstone is available as part of the ECS AI Audit.',
-        'Learn more: https://ecscornerstone.com/cornerstone', // [UPDATE] replace with real URL
+        'In the meantime, Cornerstone is available as part of the ECS AI Assessment.',
+        'Learn more: https://ecscornerstone.com/cornerstone',
         '',
         'The ECS Team',
       ].join('\n'),
-    }).catch((err: unknown) => console.error('[marketing] waitlist email failed', err));
+    }).catch((err: unknown) => console.error('[marketing] waitlist confirmation email failed', err));
+
+    const notifyEmail = process.env.WAITLIST_NOTIFY_EMAIL ?? 'Michael@evertonconsultingservices.org';
+    await sgMail.send({
+      to: notifyEmail,
+      from,
+      subject: 'New Cornerstone Waitlist Signup',
+      text: [
+        'New waitlist signup:',
+        '',
+        `Name:  ${firstName}`,
+        `Email: ${email}`,
+      ].join('\n'),
+    }).catch((err: unknown) => console.error('[marketing] waitlist notify email failed', err));
   }
 
   res.status(201).json({ success: true });

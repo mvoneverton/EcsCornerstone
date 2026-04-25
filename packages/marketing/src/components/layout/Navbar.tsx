@@ -5,8 +5,7 @@ import { Menu, X } from 'lucide-react';
 const NAV_LINKS = [
   { label: 'How It Works',          to: '/process' },
   { label: 'The ECS AI Scan',       to: '/scan' },
-  { label: 'The ECS AI Assessment', to: '/assessment' },
-  { label: 'ECS Cornerstone',       to: '/cornerstone' },
+  { label: 'The ECS AI Full Assessment', to: '/assessment' },
   { label: 'About',                 to: '/about' },
 ] as const;
 

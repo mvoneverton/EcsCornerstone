@@ -1,26 +1,37 @@
-# ── Railway deployment configuration ─────────────────────────────────────────
-# Single service: the API builds both packages and serves the React SPA as
-# static files.  PostgreSQL and Redis are added via Railway's plugin dashboard.
+# ── Railway monorepo configuration ───────────────────────────────────────────
+# Defines two service configurations for Railway deployment.
+# In the Railway dashboard, create two services pointing to this repo.
+# Set each service's Root Directory to "/" and Railway will read this file.
 #
 # Docs: https://docs.railway.app/reference/config-as-code
 
-[build]
+# ── Service: api ─────────────────────────────────────────────────────────────
+[services.api.build]
 builder      = "nixpacks"
-buildCommand = "npm run build"
+buildCommand = "npm run build --workspace=packages/api"
 
-[deploy]
-startCommand          = "npm run db:migrate && node packages/api/dist/index.js"
-healthcheckPath       = "/api/health"
-healthcheckTimeout    = 300
-restartPolicyType     = "on_failure"
+[services.api.deploy]
+startCommand            = "npm run db:migrate --workspace=packages/api && node packages/api/dist/index.js"
+healthcheckPath         = "/api/health"
+healthcheckTimeout      = 300
+restartPolicyType       = "on_failure"
 restartPolicyMaxRetries = 10
+
+# ── Service: marketing (static site) ─────────────────────────────────────────
+# Railway serves the output directory directly — no start command required.
+[services.marketing.build]
+builder      = "nixpacks"
+buildCommand = "npm run build --workspace=packages/marketing"
+
+[services.marketing.deploy]
+staticDir = "packages/marketing/dist"
 
 # ── Environment variable notes ────────────────────────────────────────────────
 # Railway injects $DATABASE_URL and $REDIS_URL automatically when you add the
 # PostgreSQL and Redis plugins.  All other variables must be added manually in
 # the Railway dashboard under Service → Variables.
 #
-# Required variables (see packages/api/.env.staging.example for the full list):
+# Required for api service:
 #   NODE_ENV=production
 #   PORT                     ← Railway sets this automatically
 #   JWT_SECRET
@@ -38,5 +49,8 @@ restartPolicyMaxRetries = 10
 #   STRIPE_PRICE_STARTER_ANNUALLY
 #   STRIPE_PRICE_GROWTH_MONTHLY
 #   STRIPE_PRICE_GROWTH_ANNUALLY
-#   FRONTEND_URL             ← set to the Railway public URL after first deploy
+#   FRONTEND_URL             ← set to the marketing service Railway URL
 #   PUPPETEER_SKIP_DOWNLOAD=true
+#
+# Required for marketing service:
+#   VITE_API_URL             ← set to the api service Railway URL

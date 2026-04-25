@@ -10,7 +10,7 @@ const PROCESS_STAGES: Stage[] = [
     number:  1,
     icon:    <FileSearch size={16} />,
     heading: 'Choose Your Starting Point',
-    body:    'Begin with the ECS AI Scan for a fast, focused AI analysis — or go deeper with the full ECS AI Assessment for AI plus the human factor. Both lead to the same destination: a clear picture of what to do next.',
+    body:    'Begin with the ECS AI Scan for a fast, focused AI analysis — or go deeper with the full ECS AI Full Assessment for AI plus the human factor. Both lead to the same destination: a clear picture of what to do next.',
     variant: 'audit',
   },
   {
@@ -65,7 +65,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              to="/assessment"
+              to="/assessment#book"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded
                          bg-gold-500 text-navy-950 font-semibold hover:bg-gold-400 transition-colors"
             >
@@ -113,18 +113,18 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* ECS AI Assessment */}
+            {/* ECS AI Full Assessment */}
             <div className="rounded-lg border border-gold-500/40 bg-navy-950 p-8 flex flex-col gap-4">
               <p className="text-xs font-semibold uppercase tracking-widest text-gold-400">
                 Deep &amp; Complete
               </p>
-              <h3 className="font-serif text-2xl text-white">ECS AI Assessment</h3>
+              <h3 className="font-serif text-2xl text-white">ECS AI Full Assessment</h3>
               <p className="text-sm text-navy-100 leading-relaxed">
                 A full company engagement that maps your operations, profiles your team using ECS
                 Cornerstone, and delivers a custom AI roadmap. The most complete picture of where
                 AI fits in your organization.
               </p>
-              <p className="text-xl font-semibold text-white">Starting at $1,500</p>
+              <p className="text-xl font-semibold text-white">$1,500</p>
               <Link
                 to="/assessment"
                 className="mt-auto inline-flex items-center gap-2 px-5 py-2.5 rounded
@@ -194,29 +194,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── About teaser ──────────────────────────────────────────────────── */}
-      {/* [UPDATE] replace placeholder with real about content */}
-      <section className="bg-navy-50 px-4 sm:px-6 lg:px-8 py-20">
-        <div className="max-w-2xl mx-auto text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-gold-500 mb-4">
-            About ECS
-          </p>
-          <h2 className="font-serif text-3xl sm:text-4xl text-navy-900 mb-5">
-            About Everton Consulting Services
-          </h2>
-          {/* [UPDATE] 2–3 sentences about ECS and its founder */}
-          <p className="text-navy-400 italic text-sm border-l-2 border-gold-300 pl-4 text-left mb-8">
-            [UPDATE] 2–3 sentences about ECS and its founder.
-          </p>
-          <Link
-            to="/about"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-navy-800
-                       hover:text-gold-500 transition-colors underline underline-offset-2"
-          >
-            Our Story <ArrowRight size={14} />
-          </Link>
-        </div>
-      </section>
+
     </div>
   );
 }

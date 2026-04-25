@@ -175,7 +175,7 @@ export default function AgentDetailPage() {
           First time here?
         </p>
         <h2 className="font-serif text-xl text-white mb-3">
-          Haven't completed your ECS AI Assessment yet?
+          Haven't completed your ECS AI Full Assessment yet?
         </h2>
         <p className="text-sm text-navy-100 leading-relaxed mb-5">
           That's the first step. Your audit is where this agent gets configured to your team —

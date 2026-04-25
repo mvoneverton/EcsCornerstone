@@ -178,7 +178,7 @@ export default function CornerstoneSaasPage() {
       </section>
 
       {/* ── Email capture ─────────────────────────────────────────────────── */}
-      <section className="bg-navy-900 px-4 sm:px-6 lg:px-8 py-20">
+      <section id="waitlist" className="bg-navy-900 px-4 sm:px-6 lg:px-8 py-20">
         <div className="max-w-lg mx-auto">
           {submitted ? (
             <div className="text-center">
@@ -256,7 +256,7 @@ export default function CornerstoneSaasPage() {
               to="/assessment"
               className="font-semibold text-navy-900 underline underline-offset-2 hover:text-navy-700"
             >
-              ECS AI Assessment
+              ECS AI Full Assessment
             </Link>
             .{' '}
             <Link

@@ -40,7 +40,7 @@ export default function PrePaymentSummary({
   onProceed,
   isLoading,
 }: Props) {
-  const productName  = type === 'scan' ? 'ECS AI Scan' : 'ECS AI Assessment';
+  const productName  = type === 'scan' ? 'ECS AI Scan' : 'ECS AI Full Assessment';
   const amountFormatted = `$${amount.toLocaleString()}`;
   const whatNext     = WHAT_NEXT[type](formData.email);
 

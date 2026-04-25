@@ -154,7 +154,7 @@ export default function AssessmentConfirmationPage() {
           </div>
           <div className="px-5 py-5 flex flex-col gap-1 text-sm">
             <div className="flex justify-between items-baseline">
-              <span className="font-semibold text-navy-900">ECS AI Assessment</span>
+              <span className="font-semibold text-navy-900">ECS AI Full Assessment</span>
               <span className="font-semibold text-navy-900">
                 ${(inquiry.amountPaid / 100).toLocaleString()}
               </span>

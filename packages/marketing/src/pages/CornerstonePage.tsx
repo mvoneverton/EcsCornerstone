@@ -157,11 +157,12 @@ export default function CornerstonePage() {
           Timing
         </p>
         <h2 className="font-serif text-3xl text-navy-900 mb-5">
-          Included in the ECS AI Assessment. No separate charge.
+          Included in the ECS AI Full Assessment. No separate charge.
         </h2>
         <p className="text-navy-700 leading-relaxed mb-6">
-          The Cornerstone assessment is conducted during the ECS AI Assessment. Every member of your
-          team completes all three instruments as part of the assessment engagement. The results
+          The Cornerstone assessment is conducted during the ECS AI Full Assessment. Every member of your
+          team completes the Personal Assessment. The Job Assessment and Work Style Assessment are
+          completed by select individuals depending on their role and responsibilities. The results
           inform your AI roadmap, configure your agents, and remain yours to use going forward.
         </p>
         <p className="text-sm text-navy-600 leading-relaxed bg-navy-50 rounded-lg p-4 text-left">
@@ -182,7 +183,7 @@ export default function CornerstonePage() {
             consulting engagement required.
           </p>
           <Link
-            to="/cornerstone-saas"
+            to="/cornerstone-saas#waitlist"
             className="inline-flex items-center gap-2 px-6 py-3 rounded border border-navy-900
                        text-navy-900 text-sm font-semibold hover:bg-navy-900 hover:text-white
                        transition-colors"
@@ -199,7 +200,7 @@ export default function CornerstonePage() {
             Ready to profile your team?
           </h2>
           <p className="text-navy-100 leading-relaxed mb-8">
-            The Cornerstone assessment is included in every ECS AI Assessment. Book yours and your
+            The Cornerstone assessment is included in every ECS AI Full Assessment. Book yours and your
             team completes all three instruments as part of the engagement.
           </p>
           <Link

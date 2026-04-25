@@ -5,7 +5,7 @@ const FOOTER_COLS = [
     heading: 'Offerings',
     links: [
       { label: 'ECS AI Scan',        to: '/scan' },
-      { label: 'ECS AI Assessment',  to: '/assessment' },
+      { label: 'ECS AI Full Assessment', to: '/assessment' },
     ],
   },
   {

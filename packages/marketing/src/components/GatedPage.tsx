@@ -26,7 +26,7 @@ export default function GatedPage({ children }: { children: React.ReactNode }) {
             This page is available after your ECS assessment.
           </h1>
           <p className="text-navy-700 text-sm leading-relaxed mb-8">
-            Book your ECS AI Scan or ECS AI Assessment to get started. After your findings
+            Book your ECS AI Scan or ECS AI Full Assessment to get started. After your findings
             meeting, ECS will send you a personalized link to access this page.
           </p>
           <Link

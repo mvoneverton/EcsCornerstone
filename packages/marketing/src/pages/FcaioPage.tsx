@@ -50,9 +50,9 @@ const INCLUDED_ITEMS = [
 const PHASES = [
   {
     number:  1,
-    heading: 'The ECS AI Assessment',
-    body:    'Before the FCAIO engagement begins, every client completes the ECS AI Assessment. Discovery, Cornerstone assessment, team training, opportunity scoring, and roadmap. Priced separately — starting at $1,500.',
-    price:   'Starting at $1,500',
+    heading: 'The ECS AI Full Assessment',
+    body:    'Before the FCAIO engagement begins, every client completes the ECS AI Full Assessment. Discovery, Cornerstone assessment, team training, opportunity scoring, and roadmap. Priced separately — $1,500.',
+    price:   '$1,500',
   },
   {
     number:  2,

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import mikeHeadshot from '../assets/mike-everton.jpeg';
 
 // ── Static structure — all content marked [UPDATE] ───────────────────────────
 
@@ -8,22 +9,16 @@ const SECTIONS = [
     id:      'story',
     eyebrow: 'Our Story',
     heading: 'Why Everton Consulting Services exists.',
-    // [UPDATE] founder background and why ECS was founded — 2–3 paragraphs
-    body: null,
-  },
-  {
-    id:      'approach',
-    eyebrow: 'Our Approach',
-    heading: 'AI implementation built around people, not just processes.',
-    // [UPDATE] philosophy on AI implementation and the human factor — 2–3 paragraphs
-    body: null,
-  },
-  {
-    id:      'assessment-first',
-    eyebrow: 'Why the Assessment First',
-    heading: 'We understand your business before we recommend anything.',
-    // [UPDATE] explain the reasoning behind making the assessment the mandatory entry point — 1–2 paragraphs
-    body: null,
+    body: [
+      { type: 'subheading', text: 'Mike Everton: Founder & CEO' },
+      { type: 'lead', text: 'Mike didn\'t start in AI—he started with people.' },
+      { type: 'paragraph', text: 'Mike Everton has spent his career working with people across many different organizations. His passion has always been simple: how to make each individual feel important and valued. His motto has always been, "people are more important than processes."' },
+      { type: 'paragraph', text: 'Over the last decade, while working in software engineering and building systems, applications, and solutions, a new perspective emerged—AI isn\'t here to replace human connection; it\'s a tool that allows people to focus more on what matters most: people. When used the right way, technology creates space for stronger relationships, better communication, and more meaningful interactions.' },
+      { type: 'paragraph', text: 'That\'s where we come in.' },
+      { type: 'paragraph', text: 'Everton Consulting Services was built on the principle that people come first. Every engagement begins with a deeper understanding of how your team communicates, collaborates, and builds relationships. As part of our initial assessment, we include a communication pattern evaluation and training session designed to strengthen internal communication and create healthier, more effective workplace dynamics.' },
+      { type: 'paragraph', text: 'From there, we apply those same communication insights to the AI solutions we build. By designing AI agents around real human interaction patterns, we create systems that respond more naturally, operate more intelligently, and integrate more seamlessly into the way your business already works.' },
+      { type: 'closing', text: 'This isn\'t just about building AI. It\'s about building AI that understands.' },
+    ],
   },
 ];
 
@@ -49,7 +44,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Story / Approach / Audit-first ────────────────────────────────── */}
-      {SECTIONS.map(({ id, eyebrow, heading }, idx) => (
+      {SECTIONS.map(({ id, eyebrow, heading, body }, idx) => (
         <section
           key={id}
           className={`px-4 sm:px-6 lg:px-8 py-20 ${idx % 2 === 0 ? 'bg-white' : 'bg-navy-50'}`}
@@ -61,11 +56,39 @@ export default function AboutPage() {
             <h2 className="font-serif text-3xl sm:text-4xl text-navy-900 mb-6">
               {heading}
             </h2>
-            {/* [UPDATE] replace with real copy for this section */}
-            <div className="flex flex-col gap-4">
-              <p className="text-navy-400 italic text-sm border-l-2 border-gold-300 pl-4">
-                [UPDATE] replace this placeholder with real content for the "{eyebrow}" section.
-              </p>
+            <div className="flex flex-col gap-5">
+              {body ? body.map((block, i) => {
+                if (block.type === 'subheading') {
+                  return (
+                    <p key={i} className="font-semibold text-navy-900 text-lg">
+                      {block.text}
+                    </p>
+                  );
+                }
+                if (block.type === 'lead') {
+                  return (
+                    <p key={i} className="text-navy-700 text-xl font-medium italic">
+                      {block.text}
+                    </p>
+                  );
+                }
+                if (block.type === 'closing') {
+                  return (
+                    <p key={i} className="text-navy-900 font-semibold text-base border-l-4 border-gold-400 pl-4 mt-2">
+                      {block.text}
+                    </p>
+                  );
+                }
+                return (
+                  <p key={i} className="text-navy-600 leading-relaxed">
+                    {block.text}
+                  </p>
+                );
+              }) : (
+                <p className="text-navy-400 italic text-sm border-l-2 border-gold-300 pl-4">
+                  [UPDATE] replace this placeholder with real content for the "{eyebrow}" section.
+                </p>
+              )}
             </div>
           </div>
         </section>
@@ -83,34 +106,17 @@ export default function AboutPage() {
             </h2>
           </div>
 
-          {/* [UPDATE] replace with real team cards — headshots, bios, roles */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((n) => (
-              <div
-                key={n}
-                className="rounded-lg bg-navy-800 border border-navy-700 p-6 flex flex-col gap-3"
-              >
-                {/* [UPDATE] headshot */}
-                <div className="w-16 h-16 rounded-full bg-navy-700 border border-navy-600 mb-1" />
-                {/* [UPDATE] name */}
-                <p className="font-semibold text-white italic text-sm text-navy-400">
-                  [UPDATE] Team member name
-                </p>
-                {/* [UPDATE] role/title */}
-                <p className="text-xs text-blue-gray uppercase tracking-wide">
-                  [UPDATE] Role / Title
-                </p>
-                {/* [UPDATE] short bio */}
-                <p className="text-sm text-navy-300 leading-relaxed italic">
-                  [UPDATE] 2–3 sentence bio.
-                </p>
-              </div>
-            ))}
+          <div className="flex justify-center">
+            <div className="rounded-lg bg-navy-800 border border-navy-700 p-6 flex flex-col items-center gap-3 w-72">
+              <img
+                src={mikeHeadshot}
+                alt="Mike Everton"
+                className="w-24 h-24 rounded-full object-cover border-2 border-gold-400 mb-1"
+              />
+              <p className="font-semibold text-white text-base">Mike Everton</p>
+              <p className="text-xs text-gold-400 uppercase tracking-wide">Founder & CEO</p>
+            </div>
           </div>
-
-          <p className="text-center text-xs text-navy-500 mt-8 italic">
-            [UPDATE] adjust the number of team cards to match actual team size
-          </p>
         </div>
       </section>
 

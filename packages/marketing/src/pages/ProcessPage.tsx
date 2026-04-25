@@ -7,8 +7,8 @@ const STAGES: Stage[] = [
     number:  1,
     icon:    <Search size={18} />,
     heading: 'Choose Your Starting Point',
-    body:    'Begin with the ECS AI Scan for a fast, focused AI analysis — or go deeper with the full ECS AI Assessment for AI plus the human factor. Both lead to the same destination: a clear picture of what to do next.',
-    badge:   'ECS AI Scan — $1,000  ·  ECS AI Assessment — from $1,500',
+    body:    'Begin with the ECS AI Scan for a fast, focused AI analysis — or go deeper with the full ECS AI Full Assessment for AI plus the human factor. Both lead to the same destination: a clear picture of what to do next.',
+    badge:   'ECS AI Scan — $1,000  ·  ECS AI Full Assessment — $1,500',
     variant: 'audit',
   },
   {
@@ -16,7 +16,7 @@ const STAGES: Stage[] = [
     icon:    <LayoutGrid size={18} />,
     heading: 'Team Assessment',
     body:    'Every member of your team completes the ECS Cornerstone assessment — three instruments that map how your people communicate, make decisions, and work under pressure. This data informs every agent we configure and every recommendation we make.',
-    badge:   'Included in the ECS AI Assessment',
+    badge:   'Included in the ECS AI Full Assessment',
     variant: 'audit',
   },
   {
@@ -24,7 +24,7 @@ const STAGES: Stage[] = [
     icon:    <BarChart2 size={18} />,
     heading: 'Findings & Opportunity Scoring',
     body:    'We present our findings — a prioritized list of AI opportunities ranked by impact and implementation complexity. You leave with a clear picture of what to do first, what to do next, and what to save for later.',
-    badge:   'Included in the ECS AI Assessment',
+    badge:   'Included in the ECS AI Full Assessment',
     variant: 'audit',
   },
   {
@@ -33,7 +33,7 @@ const STAGES: Stage[] = [
     heading: 'Your Custom Roadmap',
     // [UPDATE] add more detail about roadmap deliverables once defined
     body:    'We build a short and long-term implementation roadmap specific to your organization. Short-term: targeted agent deployments that create immediate value. Long-term: a phased transformation plan that scales with your business.',
-    badge:   'Included in the ECS AI Assessment',
+    badge:   'Included in the ECS AI Full Assessment',
     variant: 'audit',
   },
   {
@@ -89,7 +89,7 @@ export default function ProcessPage() {
         <div className="flex flex-wrap gap-4 mb-10 text-xs">
           <span className="flex items-center gap-2">
             <span className="inline-block w-3 h-3 rounded-sm bg-gold-500" />
-            <span className="text-navy-700">Included in the ECS AI Assessment</span>
+            <span className="text-navy-700">Included in the ECS AI Full Assessment</span>
           </span>
           <span className="flex items-center gap-2">
             <span className="inline-block w-3 h-3 rounded-sm bg-navy-900" />
@@ -112,7 +112,7 @@ export default function ProcessPage() {
           </h2>
           <p className="text-navy-100 leading-relaxed mb-8">
             Every engagement starts with understanding your business. Book an ECS AI Scan for a
-            fast start, or the full ECS AI Assessment for AI plus the human factor.
+            fast start, or the full ECS AI Full Assessment for AI plus the human factor.
           </p>
           <Link
             to="/assessment"

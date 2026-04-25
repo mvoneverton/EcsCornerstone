@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -128,6 +128,7 @@ type View = 'form' | 'summary';
 
 export default function AssessmentPage() {
   const [searchParams] = useSearchParams();
+  const location       = useLocation();
   const isCancelled    = searchParams.get('cancelled') === 'true';
 
   const { formData: storedFormData, inquiryId: storedInquiryId } = loadFromSession();
@@ -149,12 +150,12 @@ export default function AssessmentPage() {
   });
 
   useEffect(() => {
-    if (isCancelled) {
+    if (isCancelled || location.hash === '#book') {
       setTimeout(() => {
         document.getElementById('book')?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     }
-  }, [isCancelled]);
+  }, [isCancelled, location.hash]);
 
   // ── Form submission ─────────────────────────────────────────────────────────
 
@@ -232,14 +233,14 @@ export default function AssessmentPage() {
             Deep &amp; Complete
           </p>
           <h1 className="font-serif text-4xl sm:text-5xl text-white mb-6">
-            The ECS AI Assessment
+            The ECS AI Full Assessment
           </h1>
           <p className="text-lg text-navy-100 leading-relaxed mb-4">
             A full-day engagement that gives you a complete picture of where AI fits in your
             business — and exactly what to do about it.
           </p>
           <p className="text-sm text-blue-gray mb-8">
-            Starting at $1,500 — pricing scales with company size.
+            $1,500
           </p>
           <a
             href="#book"
@@ -281,50 +282,11 @@ export default function AssessmentPage() {
             Worth it — even if you stop here.
           </h2>
           <p className="text-navy-700 leading-relaxed">
-            The ECS AI Assessment is designed to deliver real value whether or not you engage ECS
+            The ECS AI Full Assessment is designed to deliver real value whether or not you engage ECS
             further. The Cornerstone training is something teams talk about for months. The roadmap
             is actionable regardless of who implements it. We built it this way intentionally —
             because the best way to earn a long-term client is to give them something genuinely
             useful first.
-          </p>
-        </div>
-      </section>
-
-      {/* ── Pricing ───────────────────────────────────────────────────────── */}
-      <section className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-10">
-            <p className="text-xs font-semibold uppercase tracking-widest text-gold-500 mb-3">
-              Investment
-            </p>
-            <h2 className="font-serif text-3xl text-navy-900">Assessment Pricing</h2>
-          </div>
-          <div className="rounded-lg border border-navy-200 overflow-hidden">
-            <div className="grid grid-cols-2 bg-navy-900 px-6 py-3">
-              <span className="text-xs font-semibold uppercase tracking-widest text-blue-gray">
-                Company Size
-              </span>
-              <span className="text-xs font-semibold uppercase tracking-widest text-blue-gray">
-                Starting Price
-              </span>
-            </div>
-            {[
-              { size: 'Small Business (1–25 employees)',  price: 'Starting at $1,500' },
-              { size: 'Mid-Size (26–150 employees)',       price: 'Custom quote' },
-              { size: 'Enterprise (150+ employees)',       price: 'Custom quote' },
-            ].map(({ size, price }, idx) => (
-              <div
-                key={size}
-                className={`grid grid-cols-2 px-6 py-4 border-t border-navy-100
-                            ${idx % 2 === 0 ? 'bg-white' : 'bg-navy-50'}`}
-              >
-                <span className="text-sm text-navy-800">{size}</span>
-                <span className="text-sm font-semibold text-navy-900">{price}</span>
-              </div>
-            ))}
-          </div>
-          <p className="text-xs text-blue-gray mt-4 leading-relaxed text-center">
-            Schedule your assessment to receive a custom quote for your organization.
           </p>
         </div>
       </section>
@@ -355,10 +317,10 @@ export default function AssessmentPage() {
             </div>
             <div className="rounded-lg border border-gold-500/40 bg-navy-950 p-8 flex flex-col gap-4">
               <p className="text-xs font-semibold uppercase tracking-widest text-gold-400">
-                ECS AI Assessment — Recommended
+                ECS AI Full Assessment — Recommended
               </p>
               <p className="text-sm text-navy-100 leading-relaxed">
-                Starting at $1,500 · Full day · Team training · AI + human factor ·
+                $1,500 · Full day · Team training · AI + human factor ·
                 ECS Cornerstone included · Complete roadmap
               </p>
               <p className="text-xs text-navy-300 leading-relaxed">
@@ -406,7 +368,7 @@ export default function AssessmentPage() {
                 Get Started
               </p>
               <h2 className="font-serif text-3xl sm:text-4xl text-navy-900 mb-3">
-                Schedule Your ECS AI Assessment
+                Schedule Your ECS AI Full Assessment
               </h2>
               <p className="text-navy-700">
                 Fill out the form below. You'll review your details before payment.
@@ -423,7 +385,7 @@ export default function AssessmentPage() {
                 <p className="font-medium">Payment was not completed.</p>
                 <p className="mt-0.5">
                   Your details have been saved — review them below and click{' '}
-                  <strong>Schedule My ECS AI Assessment</strong> to try again.
+                  <strong>Schedule My ECS AI Full Assessment</strong> to try again.
                 </p>
               </div>
             </div>
@@ -546,7 +508,7 @@ export default function AssessmentPage() {
                            text-navy-950 font-semibold hover:bg-gold-400 transition-colors
                            disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? 'Saving…' : 'Schedule My ECS AI Assessment'}
+                {isSubmitting ? 'Saving…' : 'Schedule My ECS AI Full Assessment'}
               </button>
 
               <p className="text-xs text-blue-gray text-center">

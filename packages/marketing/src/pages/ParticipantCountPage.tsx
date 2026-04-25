@@ -217,7 +217,7 @@ export default function ParticipantCountPage() {
           {/* Header */}
           <div className="bg-navy-950 px-6 py-5">
             <p className="text-xs font-semibold uppercase tracking-widest text-gold-400 mb-1">
-              ECS AI Assessment
+              ECS AI Full Assessment
             </p>
             <h1 className="font-serif text-xl text-white">
               {pageData.companyName}
