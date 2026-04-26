@@ -25,11 +25,9 @@ interface Props {
   isLoading:  boolean;
 }
 
-const WHAT_NEXT: Record<'scan' | 'assessment', (email: string) => string> = {
-  scan: (email) =>
-    `After payment you will immediately see a calendar to book your Zoom discovery call at a time that works for you. Your confirmation and receipt will be emailed to ${email}.`,
-  assessment: (_email) =>
-    `After payment you will immediately see a calendar to schedule your onsite visit. You will also receive a detailed email explaining the ECS Cornerstone assessment and what to expect on the day.`,
+const WHAT_NEXT: Record<'scan' | 'assessment', string> = {
+  scan:       'After payment you will see a confirmation page. We will be in touch within 1 business day to schedule your Zoom discovery call.',
+  assessment: 'After payment you will see a confirmation page. We will be in touch within 1 business day to confirm your onsite visit date and walk you through the next steps.',
 };
 
 export default function PrePaymentSummary({
@@ -40,9 +38,9 @@ export default function PrePaymentSummary({
   onProceed,
   isLoading,
 }: Props) {
-  const productName  = type === 'scan' ? 'ECS AI Scan' : 'ECS AI Full Assessment';
+  const productName     = type === 'scan' ? 'ECS AI Scan' : 'ECS AI Full Assessment';
   const amountFormatted = `$${amount.toLocaleString()}`;
-  const whatNext     = WHAT_NEXT[type](formData.email);
+  const whatNext        = WHAT_NEXT[type];
 
   return (
     <div className="rounded-lg border border-navy-200 bg-white overflow-hidden">

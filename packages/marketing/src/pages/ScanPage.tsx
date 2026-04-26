@@ -4,6 +4,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import emailjs from '@emailjs/browser';
+
+const EJS_SERVICE  = (import.meta.env.VITE_EMAILJS_SERVICE_ID  as string | undefined) ?? 'service_njvhocw';
+const EJS_TEMPLATE = (import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string | undefined) ?? 'template_2y1xge9';
+const EJS_KEY      = (import.meta.env.VITE_EMAILJS_PUBLIC_KEY  as string | undefined) ?? '5Y8VEuPx96H8YmSpP';
 import { Check, ArrowRight, PhoneCall, Search, FileText, AlertCircle } from 'lucide-react';
 import StepIndicator from '@/components/StepIndicator';
 import PrePaymentSummary, { type InquiryFormData } from '@/components/PrePaymentSummary';
@@ -133,6 +137,7 @@ export default function ScanPage() {
   const [summaryData,       setSummaryData]       = useState<InquiryFormData | null>(null);
   const [isCreatingSession, setIsCreatingSession] = useState(false);
   const [sessionError,      setSessionError]      = useState<string | null>(null);
+  const [showSuccess,       setShowSuccess]       = useState(false);
 
   const {
     register,
@@ -180,25 +185,21 @@ export default function ScanPage() {
       }
     }
 
-    const ejsService  = import.meta.env.VITE_EMAILJS_SERVICE_ID as string | undefined;
-    const ejsTemplate = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string | undefined;
-    const ejsKey      = import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string | undefined;
-    if (ejsService && ejsTemplate && ejsKey) {
-      emailjs.send(ejsService, ejsTemplate, {
-        service_type:    'ECS AI Scan',
-        inquiry_id:      id,
-        from_name:       `${data.firstName} ${data.lastName}`,
-        reply_to:        data.email,
-        company_name:    data.companyName,
-        title:           data.title,
-        phone:           data.phone,
-        company_size:    data.companySize,
-        industry:        data.industry,
-        referral_source: data.referralSource ?? 'not specified',
-        message:         data.message,
-      }, ejsKey).catch((err: unknown) => console.error('[emailjs] scan notify failed', err));
-    }
+    emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
+      service_type:    'ECS AI Scan',
+      inquiry_id:      id,
+      from_name:       `${data.firstName} ${data.lastName}`,
+      reply_to:        data.email,
+      company_name:    data.companyName,
+      title:           data.title,
+      phone:           data.phone,
+      company_size:    data.companySize,
+      industry:        data.industry,
+      referral_source: data.referralSource ?? 'not specified',
+      message:         data.message,
+    }, EJS_KEY).catch((err: unknown) => console.error('[emailjs] scan notify failed', err));
 
+    setShowSuccess(true);
     saveToSession(data, id);
     setInquiryId(id);
     setSummaryData(data as InquiryFormData);
@@ -387,14 +388,29 @@ export default function ScanPage() {
 
           {/* ── Summary view ─────────────────────────────────────────────── */}
           {view === 'summary' && summaryData && (
-            <PrePaymentSummary
-              type="scan"
-              formData={summaryData}
-              amount={1000}
-              onBack={handleBack}
-              onProceed={() => { void handleProceedToPayment(); }}
-              isLoading={isCreatingSession}
-            />
+            <>
+              {showSuccess && (
+                <div className="flex items-start gap-3 rounded border border-green-200 bg-green-50
+                                px-4 py-3 mb-6 text-sm text-green-800">
+                  <Check size={16} className="mt-0.5 flex-shrink-0 text-green-600" />
+                  <div>
+                    <p className="font-medium">Your inquiry has been received.</p>
+                    <p className="mt-0.5">
+                      We'll be in touch within 1 business day. Review your details below and
+                      proceed to payment when you're ready.
+                    </p>
+                  </div>
+                </div>
+              )}
+              <PrePaymentSummary
+                type="scan"
+                formData={summaryData}
+                amount={1000}
+                onBack={handleBack}
+                onProceed={() => { void handleProceedToPayment(); }}
+                isLoading={isCreatingSession}
+              />
+            </>
           )}
 
           {/* ── Form view ────────────────────────────────────────────────── */}
