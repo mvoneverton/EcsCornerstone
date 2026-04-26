@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useSearchParams } from 'react-router-dom';
-import { Check, Home, Mail } from 'lucide-react';
+import { Check, Home } from 'lucide-react';
 import StepIndicator from '@/components/StepIndicator';
-import CalendlyEmbed, { type CalendlyScheduledEvent } from '@/components/CalendlyEmbed';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -21,13 +20,12 @@ interface InquiryData {
 const STEPS = [
   { label: 'Fill out the form' },
   { label: 'Complete payment ($1,500)' },
-  { label: 'Book your onsite visit' },
-  { label: 'We come to you' },
+  { label: "You're all set" },
 ];
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
-type View = 'loading' | 'error' | 'scheduling' | 'booked';
+type View = 'loading' | 'error' | 'confirmed';
 
 export default function AssessmentConfirmationPage() {
   const [searchParams] = useSearchParams();
@@ -50,7 +48,7 @@ export default function AssessmentConfirmationPage() {
         const data = await res.json() as InquiryData;
         if (!cancelled) {
           setInquiry(data);
-          setView('scheduling');
+          setView('confirmed');
           try {
             sessionStorage.removeItem('ecs_assessment_form_data');
             sessionStorage.removeItem('ecs_assessment_inquiry_id');
@@ -64,10 +62,6 @@ export default function AssessmentConfirmationPage() {
     void verify();
     return () => { cancelled = true; };
   }, [sessionId]);
-
-  function handleEventScheduled(_event: CalendlyScheduledEvent) {
-    setView('booked');
-  }
 
   // ── Loading ────────────────────────────────────────────────────────────────
 
@@ -93,12 +87,13 @@ export default function AssessmentConfirmationPage() {
             We couldn't confirm your payment.
           </h1>
           <p className="text-sm text-navy-700 mb-2 leading-relaxed">
-            If your card was charged, your assessment is confirmed and a receipt is on its way.
+            If your card was charged, your assessment is confirmed and we'll be in touch shortly.
           </p>
-          {/* [UPDATE] replace with real support email before launch */}
           <p className="text-sm text-navy-700 mb-6">
             Need help? Email{' '}
-            <span className="font-medium text-navy-900">support@ecscornerstone.com</span>
+            <a href="mailto:mvoneverton@gmail.com" className="font-medium text-navy-900 hover:text-gold-500 transition-colors">
+              mvoneverton@gmail.com
+            </a>
           </p>
           <Link
             to="/"
@@ -112,14 +107,9 @@ export default function AssessmentConfirmationPage() {
     );
   }
 
-  // ── Derived step indicator state ───────────────────────────────────────────
-
-  const currentStep    = view === 'booked' ? 4 : 3;
-  const completedSteps = view === 'booked' ? [1, 2, 3] : [1, 2];
-
   const shortConfirmation = inquiry.stripeSessionId.slice(-12).toUpperCase();
 
-  // ── Scheduling + Booked ────────────────────────────────────────────────────
+  // ── Confirmed ──────────────────────────────────────────────────────────────
 
   return (
     <div className="bg-navy-50 min-h-screen px-4 sm:px-6 lg:px-8 py-12">
@@ -129,8 +119,8 @@ export default function AssessmentConfirmationPage() {
         <div className="mb-10">
           <StepIndicator
             steps={STEPS}
-            currentStep={currentStep}
-            completedSteps={completedSteps}
+            currentStep={3}
+            completedSteps={[1, 2]}
           />
         </div>
 
@@ -163,89 +153,48 @@ export default function AssessmentConfirmationPage() {
             <p className="text-blue-gray text-xs mt-1">
               Confirmation #{shortConfirmation}
             </p>
-            <p className="text-blue-gray text-xs">
-              Receipt sent to {inquiry.email}
-            </p>
           </div>
         </div>
 
-        {/* ── Scheduling view ──────────────────────────────────────────────── */}
-        {view === 'scheduling' && (
-          <>
-            <div className="mb-6">
-              <p className="text-xs font-semibold uppercase tracking-widest text-gold-500 mb-2">
-                Now: Choose your visit date
-              </p>
-              <h2 className="font-serif text-2xl text-navy-900 mb-1">
-                Select your preferred date below.
-              </h2>
-              {/* [UPDATE] confirm availability before launch — Mon–Sat, no Sundays */}
-              <p className="text-sm text-navy-700">
-                Available Monday–Saturday. Dates book quickly — we recommend choosing now.
-              </p>
+        {/* Confirmation message */}
+        <div className="rounded-lg border border-navy-200 bg-white p-6">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="flex-shrink-0 flex items-center justify-center
+                            w-8 h-8 rounded-full bg-gold-100">
+              <Check size={16} className="text-gold-500" strokeWidth={2.5} />
             </div>
-
-            <CalendlyEmbed
-              url={import.meta.env.VITE_CALENDLY_ASSESSMENT_URL as string ?? ''}
-              prefill={{ name: inquiry.customerName, email: inquiry.email }}
-              onEventScheduled={handleEventScheduled}
-            />
-          </>
-        )}
-
-        {/* ── Booked view ──────────────────────────────────────────────────── */}
-        {view === 'booked' && (
-          <div className="rounded-lg border border-navy-200 bg-white p-6">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="flex-shrink-0 flex items-center justify-center
-                              w-8 h-8 rounded-full bg-gold-100">
-                <Check size={16} className="text-gold-500" strokeWidth={2.5} />
-              </div>
-              <h2 className="font-serif text-xl text-navy-900">
-                Visit scheduled.
-              </h2>
-            </div>
-
-            <p className="text-sm text-navy-700 leading-relaxed mb-6">
-              A calendar invitation will be sent to{' '}
-              <span className="font-medium text-navy-900">{inquiry.email}</span>{' '}
-              by Calendly.
-            </p>
-
-            <div className="rounded bg-navy-50 border border-navy-100 px-5 py-4 mb-6">
-              <div className="flex items-center gap-2 mb-3">
-                <Mail size={15} className="text-gold-500 flex-shrink-0" />
-                <p className="text-xs font-semibold uppercase tracking-widest text-gold-500">
-                  Check your email
-                </p>
-              </div>
-              <p className="text-sm text-navy-700 leading-relaxed mb-3">
-                We've sent a full pre-visit overview to{' '}
-                <span className="font-medium text-navy-900">{inquiry.email}</span> including:
-              </p>
-              <ul className="space-y-2">
-                {[
-                  'Everything about the ECS Cornerstone assessment',
-                  'What the visit day looks like',
-                  'One quick question about your team',
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-2.5 text-sm text-navy-700">
-                    <Check size={13} className="text-gold-500 mt-0.5 flex-shrink-0" strokeWidth={2.5} />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded bg-navy-900
-                         text-white text-sm font-semibold hover:bg-navy-800 transition-colors"
-            >
-              <Home size={15} /> Back to Home
-            </Link>
+            <h2 className="font-serif text-xl text-navy-900">
+              You're all set.
+            </h2>
           </div>
-        )}
+
+          <p className="text-sm text-navy-700 leading-relaxed mb-3">
+            We'll be in touch within 1 business day to confirm your onsite visit date and walk
+            you through the next steps.
+          </p>
+
+          <p className="text-sm text-navy-700 leading-relaxed mb-3">
+            We'll discuss your team assessment details when we connect.
+          </p>
+
+          <p className="text-sm text-navy-700 leading-relaxed mb-6">
+            Questions?{' '}
+            <a
+              href="mailto:mvoneverton@gmail.com"
+              className="font-medium text-navy-900 hover:text-gold-500 transition-colors"
+            >
+              mvoneverton@gmail.com
+            </a>
+          </p>
+
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded bg-navy-900
+                       text-white text-sm font-semibold hover:bg-navy-800 transition-colors"
+          >
+            <Home size={15} /> Back to Home
+          </Link>
+        </div>
 
       </div>
     </div>

@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import emailjs from '@emailjs/browser';
 import { Check, ArrowRight, PhoneCall, Search, FileText, AlertCircle } from 'lucide-react';
 import StepIndicator from '@/components/StepIndicator';
 import PrePaymentSummary, { type InquiryFormData } from '@/components/PrePaymentSummary';
@@ -177,6 +178,25 @@ export default function ScanPage() {
         });
         return;
       }
+    }
+
+    const ejsService  = import.meta.env.VITE_EMAILJS_SERVICE_ID as string | undefined;
+    const ejsTemplate = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string | undefined;
+    const ejsKey      = import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string | undefined;
+    if (ejsService && ejsTemplate && ejsKey) {
+      emailjs.send(ejsService, ejsTemplate, {
+        service_type:    'ECS AI Scan',
+        inquiry_id:      id,
+        from_name:       `${data.firstName} ${data.lastName}`,
+        reply_to:        data.email,
+        company_name:    data.companyName,
+        title:           data.title,
+        phone:           data.phone,
+        company_size:    data.companySize,
+        industry:        data.industry,
+        referral_source: data.referralSource ?? 'not specified',
+        message:         data.message,
+      }, ejsKey).catch((err: unknown) => console.error('[emailjs] scan notify failed', err));
     }
 
     saveToSession(data, id);

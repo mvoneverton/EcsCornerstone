@@ -15,6 +15,9 @@ if (process.env.SENDGRID_API_KEY) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 }
 
+// SendGrid is used only for FCAIO and waitlist flows.
+// Scan and assessment inquiry notifications are handled via EmailJS on the frontend.
+
 // ── POST /api/scan/inquiry ────────────────────────────────────────────────────
 
 export async function createScanInquiry(req: Request, res: Response): Promise<void> {
@@ -37,53 +40,6 @@ export async function createScanInquiry(req: Request, res: Response): Promise<vo
   );
 
   const inquiryId = rows[0].id;
-
-  if (process.env.SENDGRID_API_KEY && process.env.SENDGRID_FROM_EMAIL) {
-    const from = process.env.SENDGRID_FROM_EMAIL;
-
-    await sgMail.send({
-      to: d.email,
-      from,
-      subject: 'We received your ECS AI Scan request',
-      text: [
-        `Hi ${d.firstName},`,
-        '',
-        "Thank you for reaching out. We've received your ECS AI Scan request and will be in touch within 1 business day to confirm your Zoom call date.",
-        '',
-        `Company: ${d.companyName}`,
-        `Company size: ${d.companySize}`,
-        '',
-        "You'll receive a payment link in your confirmation email.",
-        '',
-        'The ECS Team',
-        'Everton Consulting Services',
-      ].join('\n'),
-    }).catch((err: unknown) => console.error('[marketing] scan confirmation email failed', err));
-
-    const notifyEmail = process.env.SCAN_NOTIFY_EMAIL;
-    if (notifyEmail) {
-      await sgMail.send({
-        to: notifyEmail,
-        from,
-        subject: `New ECS AI Scan Inquiry — ${d.companyName}`,
-        text: [
-          `New ECS AI Scan inquiry received (ID: ${inquiryId})`,
-          '',
-          `Name:     ${d.firstName} ${d.lastName}`,
-          `Title:    ${d.title}`,
-          `Company:  ${d.companyName}`,
-          `Email:    ${d.email}`,
-          `Phone:    ${d.phone}`,
-          `Size:     ${d.companySize}`,
-          `Industry: ${d.industry}`,
-          `Referral: ${d.referralSource ?? 'not specified'}`,
-          '',
-          'Message:',
-          d.message,
-        ].join('\n'),
-      }).catch((err: unknown) => console.error('[marketing] scan notify email failed', err));
-    }
-  }
 
   res.status(201).json({ success: true, inquiryId });
 }
@@ -110,54 +66,6 @@ export async function createAssessmentInquiry(req: Request, res: Response): Prom
   );
 
   const inquiryId = rows[0].id;
-
-  if (process.env.SENDGRID_API_KEY && process.env.SENDGRID_FROM_EMAIL) {
-    const from = process.env.SENDGRID_FROM_EMAIL;
-
-    await sgMail.send({
-      to: d.email,
-      from,
-      subject: 'We received your ECS AI Assessment request',
-      text: [
-        `Hi ${d.firstName},`,
-        '',
-        "Thank you for reaching out. We've received your ECS AI Assessment request and will be in touch within 1 business day to confirm your date and provide a custom quote.",
-        '',
-        `Company: ${d.companyName}`,
-        `Company size: ${d.companySize}`,
-        '',
-        'Looking forward to speaking with you.',
-        '',
-        'The ECS Team',
-        'Everton Consulting Services',
-      ].join('\n'),
-    }).catch((err: unknown) => console.error('[marketing] assessment confirmation email failed', err));
-
-    const notifyEmail = process.env.ASSESSMENT_NOTIFY_EMAIL;
-    if (notifyEmail) {
-      await sgMail.send({
-        to: notifyEmail,
-        from,
-        subject: `New ECS AI Assessment Inquiry — ${d.companyName}`,
-        text: [
-          `New assessment inquiry received (ID: ${inquiryId})`,
-          '',
-          `Name:        ${d.firstName} ${d.lastName}`,
-          `Title:       ${d.title}`,
-          `Company:     ${d.companyName}`,
-          `Email:       ${d.email}`,
-          `Phone:       ${d.phone}`,
-          `Size:        ${d.companySize}`,
-          `Industry:    ${d.industry}`,
-          `Assessment:  ${d.assessmentCount} employees`,
-          `Referral:    ${d.referralSource ?? 'not specified'}`,
-          '',
-          'Message:',
-          d.message,
-        ].join('\n'),
-      }).catch((err: unknown) => console.error('[marketing] assessment notify email failed', err));
-    }
-  }
 
   res.status(201).json({ success: true, inquiryId });
 }

@@ -1,11 +1,6 @@
 import type { Request, Response } from 'express';
-import sgMail from '@sendgrid/mail';
 import pool from '../db/client';
 import stripe from '../billing/stripe';
-
-if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-}
 
 // ── POST /api/scan/create-checkout-session ────────────────────────────────────
 
@@ -168,12 +163,6 @@ export async function verifyScanSession(req: Request, res: Response): Promise<vo
     [inquiryId, sessionId, session.payment_intent as string | null]
   );
 
-  if (updated.length > 0) {
-    await sendScanReceiptEmail(updated[0], sessionId).catch(
-      (err: unknown) => console.error('[booking] scan receipt email failed', err)
-    );
-  }
-
   const { rows } = await pool.query<{
     id: string; first_name: string; last_name: string;
     email: string; company_name: string;
@@ -235,12 +224,6 @@ export async function verifyAssessmentSession(req: Request, res: Response): Prom
     [inquiryId, sessionId, session.payment_intent as string | null]
   );
 
-  if (updated.length > 0) {
-    await sendAssessmentReceiptEmail(updated[0], sessionId).catch(
-      (err: unknown) => console.error('[booking] assessment receipt email failed', err)
-    );
-  }
-
   const { rows } = await pool.query<{
     id: string; first_name: string; last_name: string;
     email: string; company_name: string;
@@ -266,88 +249,3 @@ export async function verifyAssessmentSession(req: Request, res: Response): Prom
   });
 }
 
-// ── Email 1 helpers ───────────────────────────────────────────────────────────
-
-async function sendScanReceiptEmail(
-  inq: { first_name: string; email: string; company_name: string },
-  sessionId: string
-): Promise<void> {
-  if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) return;
-
-  const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:5173';
-  const date = new Date().toLocaleDateString('en-US', {
-    year: 'numeric', month: 'long', day: 'numeric',
-  });
-
-  await sgMail.send({
-    to:      inq.email,
-    from:    process.env.SENDGRID_FROM_EMAIL,
-    subject: `Your ECS AI Scan is confirmed — ${inq.company_name}`,
-    text: [
-      `Hi ${inq.first_name},`,
-      '',
-      'Your ECS AI Scan is confirmed and payment received.',
-      '',
-      'Receipt',
-      '─'.repeat(35),
-      `ECS AI Scan          $1,000`,
-      `${inq.company_name} · ${date}`,
-      `Confirmation #${sessionId}`,
-      '─'.repeat(35),
-      '',
-      "Next: Schedule your Zoom call",
-      "If you haven't already, book your call here:",
-      `${frontendUrl}/scan/confirmation?session_id=${sessionId}`,
-      '',
-      'What happens on the call:',
-      "We'll map your business operations, identify friction points, and pinpoint exactly where AI creates leverage.",
-      '',
-      'Within 48 hours of your call you will receive a custom PowerPoint report with your AI recommendations.',
-      '',
-      // [UPDATE] replace with real support email and founder name before launch
-      'Questions? support@ecscornerstone.com',
-      '— Marcus Everton',
-      'Everton Consulting Services',
-    ].join('\n'),
-  });
-}
-
-async function sendAssessmentReceiptEmail(
-  inq: { first_name: string; email: string; company_name: string },
-  sessionId: string
-): Promise<void> {
-  if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) return;
-
-  const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:5173';
-  const date = new Date().toLocaleDateString('en-US', {
-    year: 'numeric', month: 'long', day: 'numeric',
-  });
-
-  await sgMail.send({
-    to:      inq.email,
-    from:    process.env.SENDGRID_FROM_EMAIL,
-    subject: `Your ECS AI Assessment is confirmed — ${inq.company_name}`,
-    text: [
-      `Hi ${inq.first_name},`,
-      '',
-      'Your ECS AI Assessment is confirmed and payment received.',
-      '',
-      'Receipt',
-      '─'.repeat(35),
-      `ECS AI Assessment        $1,500`,
-      `${inq.company_name} · ${date}`,
-      `Confirmation #${sessionId}`,
-      '─'.repeat(35),
-      '',
-      "If you haven't chosen your visit date yet:",
-      `${frontendUrl}/assessment/confirmation?session_id=${sessionId}`,
-      '',
-      "We'll follow up with your full pre-visit guide shortly.",
-      '',
-      // [UPDATE] replace with real support email and founder name before launch
-      'Questions? support@ecscornerstone.com',
-      '— Marcus Everton',
-      'Everton Consulting Services',
-    ].join('\n'),
-  });
-}
