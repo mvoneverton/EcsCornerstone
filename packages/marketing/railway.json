@@ -4,6 +4,6 @@
     "buildCommand": "npm install --include=dev && npm run build"
   },
   "deploy": {
-    "staticDir": "packages/marketing/dist"
+    "startCommand": "node serve.js"
   }
 }

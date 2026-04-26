@@ -17,14 +17,13 @@ healthcheckTimeout      = 300
 restartPolicyType       = "on_failure"
 restartPolicyMaxRetries = 10
 
-# ── Service: marketing (static site) ─────────────────────────────────────────
-# Railway serves the output directory directly — no start command required.
+# ── Service: marketing ───────────────────────────────────────────────────────
 [services.marketing.build]
 builder      = "nixpacks"
-buildCommand = "cd packages/marketing && npm run build"
+buildCommand = "cd packages/marketing && npm install --include=dev && npm run build"
 
 [services.marketing.deploy]
-staticDir = "packages/marketing/dist"
+startCommand = "node packages/marketing/serve.js"
 
 # ── Environment variable notes ────────────────────────────────────────────────
 # Railway injects $DATABASE_URL and $REDIS_URL automatically when you add the
