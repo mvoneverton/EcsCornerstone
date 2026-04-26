@@ -22,9 +22,5 @@
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"
-  },
-  "dependencies": {
-    "@emailjs/browser": "^4.4.1",
-    "http-proxy-middleware": "^3.0.5"
   }
 }
