@@ -23,7 +23,11 @@ builder      = "nixpacks"
 buildCommand = "cd packages/marketing && npm install --include=dev && npm run build"
 
 [services.marketing.deploy]
-startCommand = "node packages/marketing/serve.js"
+startCommand            = "node packages/marketing/serve.js"
+healthcheckPath         = "/health"
+healthcheckTimeout      = 30
+restartPolicyType       = "on_failure"
+restartPolicyMaxRetries = 5
 
 # ── Environment variable notes ────────────────────────────────────────────────
 # Railway injects $DATABASE_URL and $REDIS_URL automatically when you add the

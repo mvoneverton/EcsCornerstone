@@ -13,6 +13,10 @@ const PORT = process.env.PORT || 3000;
 // URL of your API service (e.g. https://ecscornerstone-api.up.railway.app).
 const API_URL = process.env.API_URL || 'http://localhost:3001';
 
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok' });
+});
+
 app.use('/api', (req, res) => {
   const target   = new URL(API_URL);
   const isHttps  = target.protocol === 'https:';
