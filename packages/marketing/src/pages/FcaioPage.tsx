@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Check } from 'lucide-react';
 import PhaseCard from '@/components/PhaseCard';
 import GatedPage from '@/components/GatedPage';
+import { apiPost } from '@/lib/api';
 
 // ── Form schema ───────────────────────────────────────────────────────────────
 
@@ -110,12 +111,7 @@ export default function FcaioPage() {
 
   async function onSubmit(data: FormData) {
     try {
-      const res = await fetch('/api/fcaio/inquiry', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error('Server error');
+      await apiPost('/api/fcaio/inquiry', data);
     } catch {
       setError('root', {
         message: 'Something went wrong. Please try again.',

@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import emailjs from '@emailjs/browser';
+import { apiPost } from '@/lib/api';
 
 const EJS_SERVICE  = (import.meta.env.VITE_EMAILJS_SERVICE_ID  as string | undefined) ?? 'service_njvhocw';
 const EJS_TEMPLATE = (import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string | undefined) ?? 'template_2y1xge9';
@@ -172,13 +173,7 @@ export default function AssessmentPage() {
 
     if (!id) {
       try {
-        const res = await fetch('/api/assessment/inquiry', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify(data),
-        });
-        if (!res.ok) throw new Error('Server error');
-        const json = await res.json() as { inquiryId: string };
+        const json = await apiPost('/api/assessment/inquiry', data) as { inquiryId: string };
         id = json.inquiryId;
       } catch {
         setError('root', {
@@ -218,13 +213,7 @@ export default function AssessmentPage() {
     setSessionError(null);
 
     try {
-      const res = await fetch('/api/assessment/create-checkout-session', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ inquiryId }),
-      });
-      if (!res.ok) throw new Error('Server error');
-      const { url } = await res.json() as { url: string };
+      const { url } = await apiPost('/api/assessment/create-checkout-session', { inquiryId }) as { url: string };
       window.location.href = url;
     } catch {
       setSessionError('Payment could not be started. Please try again.');

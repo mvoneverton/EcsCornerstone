@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Link } from 'react-router-dom';
 import { LayoutGrid, User, BarChart2, ArrowRight, Check } from 'lucide-react';
+import { apiPost } from '@/lib/api';
 
 // ── Form schema ───────────────────────────────────────────────────────────────
 
@@ -89,12 +90,7 @@ export default function CornerstoneSaasPage() {
   async function onSubmit(data: FormData) {
     setServerError('');
     try {
-      const res = await fetch('/api/waitlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error('Request failed');
+      await apiPost('/api/waitlist', data);
       setSubmittedName(data.firstName);
       setSubmitted(true);
     } catch {

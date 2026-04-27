@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { Link } from 'react-router-dom';
 import { Check, ArrowRight, FileSearch, Users, GraduationCap, Map } from 'lucide-react';
 import PricingNote from '@/components/PricingNote';
+import { apiPost } from '@/lib/api';
 
 // ── Form schema ───────────────────────────────────────────────────────────────
 
@@ -103,12 +104,7 @@ export default function AuditPage() {
 
   async function onSubmit(data: FormData) {
     try {
-      const res = await fetch('/api/audit/inquiry', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error('Server error');
+      await apiPost('/api/audit/inquiry', data);
     } catch {
       setError('root', {
         message:

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Users, Check, AlertCircle, Loader2 } from 'lucide-react';
+import { apiGet, apiPost } from '@/lib/api';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -48,14 +49,9 @@ export default function ParticipantCountPage() {
 
     async function validate() {
       try {
-        const res = await fetch(
+        const data = await apiGet(
           `/api/assessment/participant-count?id=${encodeURIComponent(id)}&token=${encodeURIComponent(token)}`
-        );
-        if (!res.ok) {
-          if (!cancelled) setView('invalid');
-          return;
-        }
-        const data = await res.json() as PageData;
+        ) as PageData;
         if (!cancelled) {
           setPageData(data);
           // Skip straight to submitted state if already answered
@@ -90,15 +86,7 @@ export default function ParticipantCountPage() {
     setView('submitting');
 
     try {
-      const res = await fetch('/api/assessment/participant-count', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ inquiryId: id, token, count: parsed }),
-      });
-
-      if (!res.ok) throw new Error('Server error');
-
-      const json = await res.json() as { success: boolean; alreadySubmitted?: boolean; count?: number };
+      const json = await apiPost('/api/assessment/participant-count', { inquiryId: id, token, count: parsed }) as { success: boolean; alreadySubmitted?: boolean; count?: number };
 
       setSubmitted({
         count:           json.alreadySubmitted ? (json.count ?? parsed) : parsed,

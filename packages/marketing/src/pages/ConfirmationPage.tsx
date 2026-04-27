@@ -5,6 +5,7 @@ import { agents } from '@/data/agents';
 import { useRoster } from '@/context/RosterContext';
 import AgentIcon from '@/components/AgentIcon';
 import GatedPage from '@/components/GatedPage';
+import { apiGet } from '@/lib/api';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -34,9 +35,7 @@ export default function ConfirmationPage() {
 
     async function load() {
       try {
-        const res = await fetch(`/api/stripe/session/${encodeURIComponent(sessionId!)}`);
-        if (!res.ok) throw new Error('Session not found or payment incomplete');
-        const data = await res.json() as SessionData;
+        const data = await apiGet(`/api/stripe/session/${encodeURIComponent(sessionId!)}`) as SessionData;
         if (!cancelled) {
           setSession(data);
           // Clear roster now that payment is confirmed

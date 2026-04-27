@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, Navigate, useSearchParams } from 'react-router-dom';
 import { Check, Home } from 'lucide-react';
 import StepIndicator from '@/components/StepIndicator';
+import { apiGet } from '@/lib/api';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -41,11 +42,9 @@ export default function ScanConfirmationPage() {
 
     async function verify() {
       try {
-        const res = await fetch(
+        const data = await apiGet(
           `/api/scan/verify-session?session_id=${encodeURIComponent(sessionId!)}`
-        );
-        if (!res.ok) throw new Error('Verification failed');
-        const data = await res.json() as InquiryData;
+        ) as InquiryData;
         if (!cancelled) {
           setInquiry(data);
           setView('confirmed');

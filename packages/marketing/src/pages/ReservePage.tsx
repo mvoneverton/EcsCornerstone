@@ -9,6 +9,7 @@ import { useRoster } from '@/context/RosterContext';
 import AgentIcon from '@/components/AgentIcon';
 import PricingNote from '@/components/PricingNote';
 import GatedPage from '@/components/GatedPage';
+import { apiPost } from '@/lib/api';
 
 // ── Form schema ───────────────────────────────────────────────────────────────
 
@@ -92,15 +93,7 @@ export default function ReservePage() {
 
   async function onSubmit(data: FormData) {
     try {
-      const res = await fetch('/api/stripe/create-checkout-session', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ ...data, agentIds: selectedAgentIds }),
-      });
-
-      if (!res.ok) throw new Error('Server error');
-
-      const { url } = await res.json() as { url: string };
+      const { url } = await apiPost('/api/stripe/create-checkout-session', { ...data, agentIds: selectedAgentIds }) as { url: string };
       window.location.href = url;
     } catch {
       setError('root', { message: 'Something went wrong. Please try again.' });
