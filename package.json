@@ -6,15 +6,10 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "concurrently -n api,web -c cyan,magenta \"npm run dev --workspace=packages/api\" \"npm run dev --workspace=packages/web\"",
-    "build": "npm run build --workspace=packages/api && npm run build --workspace=packages/web",
-    "test": "npm run test --workspace=packages/api",
-    "test:watch": "npm run test:watch --workspace=packages/api",
-    "lint": "npm run lint --workspace=packages/api && npm run lint --workspace=packages/web",
-    "db:migrate": "npm run db:migrate --workspace=packages/api",
-    "db:seed": "npm run db:seed --workspace=packages/api",
-    "db:seed:staging": "npm run db:seed:staging --workspace=packages/api",
-    "start": "node packages/api/dist/index.js"
+    "build": "npm install --workspace=packages/api && npm run build --workspace=packages/api",
+    "start": "npm run db:migrate && node packages/api/dist/index.js",
+    "build:marketing": "npm install --workspace=packages/marketing && npm run build --workspace=packages/marketing",
+    "start:marketing": "node packages/marketing/serve.js"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

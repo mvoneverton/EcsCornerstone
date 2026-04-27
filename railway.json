@@ -2,7 +2,7 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "npm run build --workspace=packages/api"
+    "buildCommand": "npm install --workspace=packages/api && npm run build --workspace=packages/api"
   },
   "deploy": {
     "startCommand": "npm run db:migrate && node packages/api/dist/index.js",
