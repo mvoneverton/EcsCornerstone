@@ -6,7 +6,8 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm install --workspace=packages/api && npm run build --workspace=packages/api",
+    "build": "npm run build --workspace=packages/api",
+    "db:migrate": "npm run db:migrate --workspace=packages/api",
     "start": "npm run db:migrate && node packages/api/dist/index.js",
     "build:marketing": "npm install --workspace=packages/marketing && npm run build --workspace=packages/marketing",
     "start:marketing": "node packages/marketing/serve.js"
