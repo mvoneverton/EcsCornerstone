@@ -26,28 +26,31 @@ app.use(
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
 const allowedOrigins = [
-  'http://localhost:3001',
   'http://localhost:3000',
+  'http://localhost:3001',
+  'https://ecscornerstone-production.up.railway.app',
   'https://evertonconsultingservices.org',
   'https://www.evertonconsultingservices.org',
   process.env.FRONTEND_URL,
   process.env.MARKETING_URL,
 ].filter(Boolean) as string[];
 
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    console.log('CORS blocked origin:', origin);
+    callback(new Error(`CORS blocked: ${origin}`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+// Handle preflight requests for all routes
 app.options('*', cors());
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, curl, Postmark webhooks)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      callback(new Error(`CORS blocked: ${origin}`));
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
 
 // ── Cookie parsing (needed for refresh token HttpOnly cookie) ─────────────────
 app.use(cookieParser());
