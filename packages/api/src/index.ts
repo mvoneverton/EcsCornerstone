@@ -15,16 +15,11 @@ import { errorHandler, notFound, auditLog, generalRateLimiter } from './middlewa
 const app = express();
 const PORT = Number(process.env.PORT) || 4000;
 
-// ── Security headers ──────────────────────────────────────────────────────────
-// Disable CSP in production so the bundled React SPA can load without inline-
-// script violations; tighten this per-environment once CSP is configured.
-app.use(
-  helmet({
-    contentSecurityPolicy: process.env.NODE_ENV === 'production' ? false : undefined,
-  })
-);
-
-// ── CORS ──────────────────────────────────────────────────────────────────────
+// ── CORS — must be first, before Helmet ───────────────────────────────────────
+// Helmet 7 sets Cross-Origin-Resource-Policy: same-origin by default, which
+// blocks cross-origin reads even when CORS headers permit them. Registering
+// CORS first guarantees Access-Control-* headers are set before any other
+// middleware can interfere.
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3001',
@@ -53,6 +48,18 @@ const corsOptions: cors.CorsOptions = {
 
 // Single cors middleware handles both preflight and actual requests
 app.use(cors(corsOptions));
+
+// ── Security headers ──────────────────────────────────────────────────────────
+// Disable CSP in production so the bundled React SPA can load without inline-
+// script violations; tighten this per-environment once CSP is configured.
+// crossOriginResourcePolicy is set to false so the CORP header does not
+// override the CORS allowlist for cross-origin API consumers.
+app.use(
+  helmet({
+    contentSecurityPolicy:       process.env.NODE_ENV === 'production' ? false : undefined,
+    crossOriginResourcePolicy:   false,
+  })
+);
 
 // ── Cookie parsing (needed for refresh token HttpOnly cookie) ─────────────────
 app.use(cookieParser());
