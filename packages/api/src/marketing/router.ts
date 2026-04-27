@@ -2,7 +2,6 @@ import { Router, type Request, type Response } from 'express';
 import {
   createScanInquiry,
   createAssessmentInquiry,
-  createAuditInquiry,
   createFcaioInquiry,
   joinWaitlist,
   createCheckoutSession,

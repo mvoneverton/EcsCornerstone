@@ -150,16 +150,13 @@ export async function verifyScanSession(req: Request, res: Response): Promise<vo
   }
 
   // WHERE paid_at IS NULL ensures only the first caller marks paid and sends email
-  const { rows: updated } = await pool.query<{
-    first_name: string; email: string; company_name: string;
-  }>(
+  await pool.query(
     `UPDATE scan_inquiries
      SET payment_status          = 'paid',
          stripe_session_id       = $2,
          stripe_payment_intent_id = $3,
          paid_at                 = now()
-     WHERE id = $1 AND paid_at IS NULL
-     RETURNING first_name, email, company_name`,
+     WHERE id = $1 AND paid_at IS NULL`,
     [inquiryId, sessionId, session.payment_intent as string | null]
   );
 
@@ -211,16 +208,13 @@ export async function verifyAssessmentSession(req: Request, res: Response): Prom
     return;
   }
 
-  const { rows: updated } = await pool.query<{
-    first_name: string; email: string; company_name: string;
-  }>(
+  await pool.query(
     `UPDATE assessment_inquiries
      SET payment_status          = 'paid',
          stripe_session_id       = $2,
          stripe_payment_intent_id = $3,
          paid_at                 = now()
-     WHERE id = $1 AND paid_at IS NULL
-     RETURNING first_name, email, company_name`,
+     WHERE id = $1 AND paid_at IS NULL`,
     [inquiryId, sessionId, session.payment_intent as string | null]
   );
 

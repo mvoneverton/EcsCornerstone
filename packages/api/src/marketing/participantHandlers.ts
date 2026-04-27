@@ -54,7 +54,7 @@ export async function submitParticipantCount(req: Request, res: Response): Promi
   const inq       = rows[0];
   const submitted = hashToken(token);
 
-  if (!timingSafeCompareHex(submitted, inq.participant_count_token_hash)) {
+  if (!timingSafeCompareHex(submitted, inq.participant_count_token_hash!)) {
     res.status(403).json({ error: 'Invalid token' });
     return;
   }
@@ -109,7 +109,7 @@ export async function getParticipantCountPage(req: Request, res: Response): Prom
   const inq       = rows[0];
   const submitted = hashToken(token);
 
-  if (!timingSafeCompareHex(submitted, inq.participant_count_token_hash)) {
+  if (!timingSafeCompareHex(submitted, inq.participant_count_token_hash!)) {
     res.status(403).json({ error: 'Invalid token' });
     return;
   }
