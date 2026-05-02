@@ -15,15 +15,18 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
     },
-    server: {
-      port: 3002,
-      host: '0.0.0.0',
-      proxy: {
-        '/api': {
-          target: env.VITE_API_URL || 'http://localhost:3001',
-          changeOrigin: true,
+    // Proxy only runs in development — never in production builds
+    ...(mode === 'development' ? {
+      server: {
+        port: 3002,
+        host: '0.0.0.0',
+        proxy: {
+          '/api': {
+            target: env.VITE_API_URL || 'http://localhost:3001',
+            changeOrigin: true,
+          },
         },
       },
-    },
+    } : {}),
   };
 });
