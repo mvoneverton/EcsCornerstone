@@ -57,11 +57,7 @@ export default function ProcessStage({ number, icon, heading, body, badge, varia
         <h3 className={`font-serif text-xl mb-2 ${ts.heading}`}>{heading}</h3>
         <p className={`text-sm leading-relaxed ${ts.body}`}>{body}</p>
 
-        {badge && (
-          <span className={`inline-block mt-4 text-xs font-medium px-3 py-1 rounded-full ${vs.badge}`}>
-            {badge}
-          </span>
-        )}
+        
       </div>
     </div>
   );
