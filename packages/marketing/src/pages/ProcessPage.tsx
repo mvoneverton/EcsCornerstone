@@ -42,7 +42,6 @@ const STAGES: Stage[] = [
     heading: 'Implementation',
     // [UPDATE] add implementation detail — agent deployment, training, onboarding process
     body:    'Your agents are deployed and configured to your team\'s Cornerstone profiles. Each agent is calibrated to your workflows, communication standards, and operational priorities before going live.',
-    badge:   'Agent Placement · FCAIO (Fractional Chief AI Officer)',
     variant: 'implementation',
   },
   {
