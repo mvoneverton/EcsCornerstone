@@ -48,9 +48,18 @@ app.use('/api', (req, res) => {
   req.pipe(proxyReq, { end: true });
 });
 
-app.use(express.static(path.join(__dirname, 'dist')));
+// Hashed JS/CSS assets get long-lived cache; HTML must never be cached so
+// the browser always fetches the latest index.html after a redeploy.
+app.use(express.static(path.join(__dirname, 'dist'), {
+  setHeaders(res, filePath) {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
+  },
+}));
 
 app.get('*', (_req, res) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
