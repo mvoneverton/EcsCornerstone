@@ -56,7 +56,7 @@ export default function HomePage() {
           </p>
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl mb-7 leading-tight">
             <span className="text-white">Automate the ordinary.</span><br />
-            <span className="text-gold-500">Honour the individual.</span>
+            <span className="text-gold-500">Honor the individual.</span>
           </h1>
           <p className="text-lg text-navy-100 leading-relaxed mb-10 max-w-2xl mx-auto">
             We help businesses identify where AI creates real leverage — and implement it the right
