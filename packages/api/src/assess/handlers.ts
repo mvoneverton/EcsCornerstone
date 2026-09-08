@@ -169,13 +169,13 @@ export async function saveResponse(
 
       await pool.query(
         `INSERT INTO assessment_responses
-           (invitation_id, respondent_id, assessment_type, question_number, response_most, response_least)
-         VALUES ($1, $2, $3, $4, $5, $6)
+           (invitation_id, respondent_id, assessment_type, question_number, response_most, response_least, company_id)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
          ON CONFLICT (invitation_id, question_number)
          DO UPDATE SET
            response_most  = EXCLUDED.response_most,
            response_least = EXCLUDED.response_least`,
-        [inv.id, inv.respondent_id, inv.assessment_type, questionNumber, responseMost, responseLeast]
+        [inv.id, inv.respondent_id, inv.assessment_type, questionNumber, responseMost, responseLeast, inv.company_id]
       );
     } else {
       const parsed = wsaJaResponseSchema.safeParse(req.body);
@@ -187,11 +187,11 @@ export async function saveResponse(
 
       await pool.query(
         `INSERT INTO assessment_responses
-           (invitation_id, respondent_id, assessment_type, question_number, response_value)
-         VALUES ($1, $2, $3, $4, $5)
+           (invitation_id, respondent_id, assessment_type, question_number, response_value, company_id)
+         VALUES ($1, $2, $3, $4, $5, $6)
          ON CONFLICT (invitation_id, question_number)
          DO UPDATE SET response_value = EXCLUDED.response_value`,
-        [inv.id, inv.respondent_id, inv.assessment_type, questionNumber, responseValue]
+        [inv.id, inv.respondent_id, inv.assessment_type, questionNumber, responseValue, inv.company_id]
       );
     }
 
@@ -287,8 +287,8 @@ export async function submitAssessment(
              (invitation_id, respondent_id, assessment_type, perspective,
               a_percentile, r_percentile, a_score_800, r_score_800,
               primary_profile, secondary_profile,
-              is_valid, validity_flags)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12::jsonb)
+              is_valid, validity_flags, company_id)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12::jsonb, $13)
            ON CONFLICT (invitation_id, perspective) DO UPDATE SET
              a_percentile      = EXCLUDED.a_percentile,
              r_percentile      = EXCLUDED.r_percentile,
@@ -311,6 +311,7 @@ export async function submitAssessment(
             perspective.secondaryProfile,
             scoringResult.isValid,
             JSON.stringify(scoringResult.validityFlags),
+            inv.company_id,
           ]
         );
       }

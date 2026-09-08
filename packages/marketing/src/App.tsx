@@ -19,6 +19,9 @@ import ConfirmationPage         from '@/pages/ConfirmationPage';
 import ScanConfirmationPage         from '@/pages/ScanConfirmationPage';
 import AssessmentConfirmationPage   from '@/pages/AssessmentConfirmationPage';
 import ParticipantCountPage         from '@/pages/ParticipantCountPage';
+import TermsPage                     from '@/pages/legal/TermsPage';
+import PrivacyPage                   from '@/pages/legal/PrivacyPage';
+import DpaPage                       from '@/pages/legal/DpaPage';
 
 export default function App() {
   return (
@@ -37,6 +40,10 @@ export default function App() {
           <Route path="/cornerstone"      element={<CornerstonePage />} />
           <Route path="/cornerstone-saas" element={<CornerstoneSaasPage />} />
           <Route path="/about"            element={<AboutPage />} />
+          {/* Legal document pages */}
+          <Route path="/legal/terms"      element={<TermsPage />} />
+          <Route path="/legal/privacy"    element={<PrivacyPage />} />
+          <Route path="/legal/dpa"        element={<DpaPage />} />
           {/* Gated pages — redirect unauthenticated visitors */}
           <Route path="/agents"           element={<AgentsPage />} />
           <Route path="/agents/:agentId"  element={<AgentDetailPage />} />

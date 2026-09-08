@@ -31,6 +31,19 @@ export function verifyAccessToken(token: string): JwtPayload | null {
   }
 }
 
+/**
+ * Short-lived token for super_admin "view as" impersonation.
+ * Signed with the same access secret so requireAuth/requireRole work
+ * unchanged — the impersonatedBy flag is what the frontend uses to render
+ * the exit-impersonation banner.
+ */
+export function signImpersonationToken(payload: JwtPayload): string {
+  return jwt.sign(payload, ACCESS_SECRET, {
+    expiresIn: '2h',
+    issuer: 'ecscornerstone',
+  } as jwt.SignOptions);
+}
+
 // ── Refresh token ─────────────────────────────────────────────────────────────
 
 export function signRefreshToken(userId: string): { token: string; jti: string } {

@@ -25,16 +25,23 @@ export async function unlockClientPath(req: Request, res: Response): Promise<voi
 
   const { paths } = parsed.data;
 
-  // Fetch the client
+  // Fetch the client — company_admins are scoped to their own company;
+  // super_admins (companyId is null) may act on any client.
+  const companyId = req.user?.companyId;
+  const query = companyId
+    ? `SELECT u.id, u.email, u.first_name, u.last_name, u.company_id, c.name AS company_name
+       FROM users u
+       JOIN companies c ON c.id = u.company_id
+       WHERE u.id = $1 AND u.company_id = $2`
+    : `SELECT u.id, u.email, u.first_name, u.last_name, u.company_id, c.name AS company_name
+       FROM users u
+       JOIN companies c ON c.id = u.company_id
+       WHERE u.id = $1`;
+  const params = companyId ? [id, companyId] : [id];
+
   const { rows: userRows } = await pool.query<{
-    id: string; email: string; first_name: string; last_name: string; company_name: string;
-  }>(
-    `SELECT u.id, u.email, u.first_name, u.last_name, c.name AS company_name
-     FROM users u
-     JOIN companies c ON c.id = u.company_id
-     WHERE u.id = $1`,
-    [id],
-  );
+    id: string; email: string; first_name: string; last_name: string; company_id: string; company_name: string;
+  }>(query, params);
 
   if (!userRows.length) {
     res.status(404).json({ error: 'Client not found' });
@@ -59,9 +66,9 @@ export async function unlockClientPath(req: Request, res: Response): Promise<voi
   const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
   await pool.query(
-    `INSERT INTO path_tokens (user_id, token_hash, paths, expires_at)
-     VALUES ($1, $2, $3, $4)`,
-    [id, tokenHash, paths, expiresAt],
+    `INSERT INTO path_tokens (user_id, token_hash, paths, expires_at, company_id)
+     VALUES ($1, $2, $3, $4, $5)`,
+    [id, tokenHash, paths, expiresAt, client.company_id],
   );
 
   // Update email sent timestamp
@@ -144,4 +151,53 @@ export async function validateToken(req: Request, res: Response): Promise<void> 
   }
 
   res.status(200).json({ valid: true, paths: payload.paths, clientId: payload.clientId });
+}
+
+// ── GET /api/admin/validate-path-token?token=xxx ─────────────────────────────
+// Public — no auth required, the token IS the auth. Used by the gated service
+// landing pages (Agent Placement / FCAIO) to validate the signed 30-day token
+// from the super admin unlock email before rendering any content.
+//
+// Deliberately returns nothing about the company beyond its id, the path type,
+// and the expiry — no name, no plan, no user data.
+
+export async function validateGatedPathToken(req: Request, res: Response): Promise<void> {
+  const token = typeof req.query.token === 'string' ? req.query.token : '';
+
+  if (!token) {
+    res.status(401).json({ valid: false, reason: 'invalid' });
+    return;
+  }
+
+  const { rows } = await pool.query<{
+    company_id: string | null;
+    path_type:  string | null;
+    expires_at: Date;
+  }>(
+    `SELECT company_id, path_type, expires_at
+       FROM path_tokens
+      WHERE token_hash = $1
+        AND deleted_at IS NULL
+        AND path_type IS NOT NULL`,
+    [hashToken(token)],
+  );
+
+  const row = rows[0];
+
+  if (!row) {
+    res.status(401).json({ valid: false, reason: 'invalid' });
+    return;
+  }
+
+  if (row.expires_at.getTime() <= Date.now()) {
+    res.status(401).json({ valid: false, reason: 'expired' });
+    return;
+  }
+
+  res.status(200).json({
+    valid:     true,
+    pathType:  row.path_type,
+    companyId: row.company_id,
+    expiresAt: row.expires_at,
+  });
 }

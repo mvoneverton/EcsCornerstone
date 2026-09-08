@@ -720,8 +720,9 @@ export async function getPosition(
        LEFT JOIN assessment_results ar ON ar.invitation_id = ai.id AND ar.perspective = 'job'
        WHERE ai.position_id = $1
          AND ai.assessment_type = 'ja'
+         AND ai.company_id = $2
        ORDER BY ai.sent_at DESC`,
-      [pid]
+      [pid, cid]
     );
 
     res.json({
@@ -839,8 +840,9 @@ export async function finalizePosition(
        JOIN assessment_results ar ON ar.invitation_id = ai.id AND ar.perspective = 'job'
        WHERE ai.position_id = $1
          AND ai.assessment_type = 'ja'
-         AND ai.completed_at IS NOT NULL`,
-      [pid]
+         AND ai.completed_at IS NOT NULL
+         AND ai.company_id = $2`,
+      [pid, cid]
     );
 
     const count = parseInt(consensus?.count ?? '0', 10);
@@ -932,6 +934,10 @@ export async function listResults(
     const dateTo         = req.query['dateTo']    as string | undefined;
     const perspectiveFilter  = req.query['perspective']     as string | undefined;
     const respondentSearch   = req.query['respondentSearch'] as string | undefined;
+    const positionIdFilter   = req.query['positionId'] as string | undefined;
+    // 'status' has no independent state machine on a completed result — the only
+    // meaningful status here is whether the PDF report has been generated yet.
+    const statusFilter       = req.query['status'] as 'ready' | 'generating' | undefined;
 
     const conditions: string[] = [
       'ai.company_id = $1',
@@ -968,11 +974,21 @@ export async function listResults(
       conditions.push(`ai.completed_at < $${paramIdx++}`);
       params.push(dateTo);
     }
+    if (positionIdFilter) {
+      conditions.push(`ai.position_id = $${paramIdx++}`);
+      params.push(positionIdFilter);
+    }
+    if (statusFilter === 'ready') {
+      conditions.push(`ar.report_s3_key IS NOT NULL`);
+    } else if (statusFilter === 'generating') {
+      conditions.push(`ar.report_s3_key IS NULL`);
+    }
 
     const where = conditions.join(' AND ');
 
     const [{ rows: results }, { rows: [countRow] }, { rows: distribution }] = await Promise.all([
       pool.query<{
+        result_id:        string;
         invitation_id:    string;
         assessment_type:  string;
         completed_at:     Date;
@@ -980,6 +996,7 @@ export async function listResults(
         first_name:       string;
         last_name:        string;
         email:            string;
+        position_title:   string | null;
         perspective:      string;
         a_percentile:     number;
         r_percentile:     number;
@@ -990,6 +1007,7 @@ export async function listResults(
         report_s3_key:    string | null;
       }>(
         `SELECT
+           ar.id AS result_id,
            ai.id AS invitation_id,
            ai.assessment_type,
            ai.completed_at,
@@ -997,6 +1015,7 @@ export async function listResults(
            u.first_name,
            u.last_name,
            u.email,
+           p.title AS position_title,
            ar.perspective,
            ar.a_percentile,
            ar.r_percentile,
@@ -1008,6 +1027,7 @@ export async function listResults(
          FROM assessment_invitations ai
          JOIN users u ON u.id = ai.respondent_id
          JOIN assessment_results ar ON ar.invitation_id = ai.id
+         LEFT JOIN positions p ON p.id = ai.position_id
          WHERE ${where}
          ORDER BY ai.completed_at DESC
          LIMIT $${paramIdx} OFFSET $${paramIdx + 1}`,
@@ -1042,6 +1062,7 @@ export async function listResults(
 
     res.json({
       results: results.map((r) => ({
+        id:               r.result_id,
         invitationId:     r.invitation_id,
         assessmentType:   r.assessment_type,
         completedAt:      r.completed_at,
@@ -1051,6 +1072,7 @@ export async function listResults(
           lastName:  r.last_name,
           email:     r.email,
         },
+        positionTitle:    r.position_title,
         perspective:      r.perspective,
         aPercentile:      r.a_percentile,
         rPercentile:      r.r_percentile,
@@ -1059,6 +1081,7 @@ export async function listResults(
         primaryProfile:   r.primary_profile,
         secondaryProfile: r.secondary_profile,
         reportS3Key:      r.report_s3_key,
+        hasReport:        r.report_s3_key !== null,
       })),
       distribution: dist,
       pagination: {
@@ -1103,8 +1126,8 @@ export async function cancelInvitation(
     await pool.query(
       `UPDATE assessment_invitations
        SET expires_at = now() - interval '1 second', updated_at = now()
-       WHERE id = $1`,
-      [invitationId]
+       WHERE id = $1 AND company_id = $2`,
+      [invitationId, cid]
     );
 
     res.status(204).send();
@@ -1152,8 +1175,8 @@ export async function resendInvitation(
     await pool.query(
       `UPDATE assessment_invitations
        SET token = $1, expires_at = $2, sent_at = now(), updated_at = now()
-       WHERE id = $3`,
-      [newToken, newExpiresAt, invitationId]
+       WHERE id = $3 AND company_id = $4`,
+      [newToken, newExpiresAt, invitationId, cid]
     );
 
     const senderName = req.user!.email;

@@ -1,3 +1,6 @@
+// Must be first — initialises Sentry before http/express are instrumented.
+import { Sentry } from './instrument';
+
 import 'dotenv/config';
 import path from 'path';
 import express from 'express';
@@ -5,11 +8,17 @@ import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 
-import authRouter      from './auth/router';
-import adminRouter     from './admin/router';
-import assessRouter    from './assess/router';
-import billingRouter   from './billing/router';
-import marketingRouter from './marketing/router';
+import { verifyEnvironment } from './scripts/verifyEnvironment';
+
+import authRouter       from './auth/router';
+import adminRouter      from './admin/router';
+import assessRouter     from './assess/router';
+import billingRouter    from './billing/router';
+import marketingRouter  from './marketing/router';
+import onboardingRouter from './onboarding/router';
+import superadminRouter from './superadmin/router';
+import reportsRouter    from './reports/router';
+import managerRouter    from './manager/router';
 import { errorHandler, notFound, auditLog, generalRateLimiter } from './middleware';
 
 const app = express();
@@ -85,11 +94,15 @@ app.get('/health',     healthHandler);  // legacy path
 app.get('/api/health', healthHandler);  // canonical path used by Railway
 
 // ── Routes ────────────────────────────────────────────────────────────────────
-app.use('/api/auth',    authRouter);
-app.use('/api/admin',   adminRouter);
-app.use('/api/assess',  assessRouter);
-app.use('/api/billing', billingRouter);
-app.use('/api',         marketingRouter);
+app.use('/api/auth',       authRouter);
+app.use('/api/admin',      adminRouter);
+app.use('/api/assess',     assessRouter);
+app.use('/api/billing',    billingRouter);
+app.use('/api/onboarding', onboardingRouter);
+app.use('/api/superadmin', superadminRouter);
+app.use('/api/reports',    reportsRouter);
+app.use('/api/manager',    managerRouter);
+app.use('/api',            marketingRouter);
 
 // ── Static frontend (production only) ────────────────────────────────────────
 // In production the API serves the pre-built React SPA.  The web dist folder
@@ -105,7 +118,17 @@ if (process.env.NODE_ENV === 'production') {
 
 // ── 404 / Error handling ──────────────────────────────────────────────────────
 app.use(notFound);
+// Sentry error handler — after all routes, before the generic error handler.
+// No-op when Sentry was not initialised (SENTRY_DSN_API unset).
+Sentry.setupExpressErrorHandler(app);
 app.use(errorHandler);
+
+// ── Environment verification ──────────────────────────────────────────────────
+// Hard-fails (process.exit(1)) if a required variable is missing/malformed.
+// Skipped under NODE_ENV=test so the test suite can import `app` freely.
+if (process.env.NODE_ENV !== 'test') {
+  verifyEnvironment();
+}
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 const server = app.listen(PORT, '0.0.0.0', () => {

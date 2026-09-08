@@ -13,6 +13,7 @@ import api from '../../lib/api';
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface ResultRow {
+  id:               string;
   invitationId:     string;
   assessmentType:   string;
   completedAt:      string;
@@ -22,6 +23,7 @@ interface ResultRow {
     lastName:  string;
     email:     string;
   };
+  positionTitle:    string | null;
   perspective:      string;
   aPercentile:      number;
   rPercentile:      number;
@@ -30,6 +32,11 @@ interface ResultRow {
   primaryProfile:   string;
   secondaryProfile: string | null;
   reportS3Key:      string | null;
+}
+
+interface PositionOption {
+  id:    string;
+  title: string;
 }
 
 interface ResultsResponse {
@@ -161,9 +168,16 @@ export default function Results() {
   const [perspFilter, setPerspFilter]           = useState('self');
   const [dateFrom, setDateFrom]                 = useState('');
   const [dateTo, setDateTo]                     = useState('');
+  const [positionFilter, setPositionFilter]     = useState('');
   const [personSearch, setPersonSearch]         = useState('');
   const [debouncedPerson, setDebouncedPerson]   = useState('');
   const [debounceTimer, setDebounceTimer]       = useState<ReturnType<typeof setTimeout> | null>(null);
+
+  const { data: positionsData } = useQuery<{ positions: PositionOption[] }>({
+    queryKey: ['positions'],
+    queryFn: () => api.get<{ positions: PositionOption[] }>('/admin/positions').then((r) => r.data),
+    staleTime: 5 * 60 * 1000,
+  });
 
   function handlePersonSearch(val: string) {
     setPersonSearch(val);
@@ -178,6 +192,7 @@ export default function Results() {
     setPerspFilter('self');
     setDateFrom('');
     setDateTo('');
+    setPositionFilter('');
     setPersonSearch('');
     setDebouncedPerson('');
     setPage(1);
@@ -198,10 +213,11 @@ export default function Results() {
   if (perspFilter)     params.set('perspective', perspFilter);
   if (dateFrom)        params.set('dateFrom', dateFrom);
   if (dateTo)          params.set('dateTo', dateTo);
+  if (positionFilter)  params.set('positionId', positionFilter);
   if (debouncedPerson) params.set('respondentSearch', debouncedPerson);
 
   const { data, isLoading } = useQuery<ResultsResponse>({
-    queryKey: ['results', page, profileFilter, typeFilter, perspFilter, dateFrom, dateTo, debouncedPerson],
+    queryKey: ['results', page, profileFilter, typeFilter, perspFilter, dateFrom, dateTo, positionFilter, debouncedPerson],
     queryFn: () => api.get<ResultsResponse>(`/admin/results?${params}`).then((r) => r.data),
     placeholderData: (prev) => prev,
   });
@@ -210,7 +226,7 @@ export default function Results() {
   const dist       = data?.distribution ?? {};
   const pagination = data?.pagination ?? { page: 1, limit: 25, total: 0, totalPages: 1 };
   const totalCount = Object.values(dist).reduce((a, b) => a + b, 0);
-  const hasFilter  = !!(profileFilter || typeFilter || (perspFilter && perspFilter !== 'self') || dateFrom || dateTo || debouncedPerson);
+  const hasFilter  = !!(profileFilter || typeFilter || (perspFilter && perspFilter !== 'self') || dateFrom || dateTo || positionFilter || debouncedPerson);
 
   return (
     <div className="px-8 py-8">
@@ -269,6 +285,20 @@ export default function Results() {
         </div>
 
         <div>
+          <label className="mb-1 block text-xs font-medium text-gray-500">Position</label>
+          <select
+            value={positionFilter}
+            onChange={(e) => handleFilterChange(setPositionFilter)(e.target.value)}
+            className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+          >
+            <option value="">All positions</option>
+            {(positionsData?.positions ?? []).map((p) => (
+              <option key={p.id} value={p.id}>{p.title}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
           <label className="mb-1 block text-xs font-medium text-gray-500">Completed from</label>
           <input
             type="date"
@@ -301,6 +331,7 @@ export default function Results() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Person</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Position</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Assessment</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Perspective</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Profile</th>
@@ -313,7 +344,7 @@ export default function Results() {
             {isLoading && (
               Array.from({ length: 8 }).map((_, i) => (
                 <tr key={i}>
-                  {Array.from({ length: 7 }).map((_, j) => (
+                  {Array.from({ length: 8 }).map((_, j) => (
                     <td key={j} className="px-6 py-4">
                       <div
                         className="h-4 rounded bg-gray-100 animate-pulse"
@@ -326,7 +357,7 @@ export default function Results() {
             )}
             {!isLoading && results.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-6 py-12 text-center text-sm text-gray-400">
+                <td colSpan={8} className="px-6 py-12 text-center text-sm text-gray-400">
                   No completed results match your filters.
                 </td>
               </tr>
@@ -342,6 +373,9 @@ export default function Results() {
                     {r.respondent.firstName} {r.respondent.lastName}
                   </div>
                   <div className="text-xs text-gray-400">{r.respondent.email}</div>
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-600">
+                  {r.positionTitle ?? <span className="text-gray-400">—</span>}
                 </td>
                 <td className="px-6 py-4">
                   <Badge variant="blue">{assessmentLabel(r.assessmentType)}</Badge>
@@ -372,11 +406,11 @@ export default function Results() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate(`/admin/people/${r.respondent.id}`);
+                        navigate(`/admin/results/${r.id}`);
                       }}
                       className="text-xs font-medium text-accent hover:underline"
                     >
-                      View
+                      Details
                     </button>
                   </div>
                 </td>

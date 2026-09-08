@@ -26,7 +26,7 @@ export default function Login() {
   const { setAuth } = useAuth();
   const navigate    = useNavigate();
   const location    = useLocation();
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname ?? '/admin';
+  const explicitFrom = (location.state as { from?: { pathname: string } })?.from?.pathname;
 
   const {
     register,
@@ -35,12 +35,24 @@ export default function Login() {
     setError,
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
+  function defaultDestinationFor(role: string): string {
+    switch (role) {
+      case 'super_admin':  return '/superadmin';
+      case 'manager':      return '/manager';
+      case 'respondent':
+      case 'employee':     return '/report';
+      default:             return '/admin'; // company_admin, facilitator
+    }
+  }
+
   const mutation = useMutation({
     mutationFn: (data: FormValues) =>
       api.post<LoginResponse>('/auth/login', data).then((r) => r.data),
     onSuccess: (data) => {
       setAuth(data.user, data.accessToken);
-      navigate(from, { replace: true });
+      // A redirect the user was bounced from (ProtectedRoute) takes priority
+      // over the role default.
+      navigate(explicitFrom ?? defaultDestinationFor(data.user.role), { replace: true });
     },
     onError: (err: AxiosError<{ error: { message: string } }>) => {
       const msg = err.response?.data?.error?.message ?? 'Login failed. Please try again.';

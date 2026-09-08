@@ -33,7 +33,7 @@ const TEXT_STYLES: Record<Variant, { heading: string; body: string }> = {
   support:        { heading: 'text-navy-900', body: 'text-navy-700' },
 };
 
-export default function ProcessStage({ number, icon, heading, body, badge, variant, isLast = false }: Props) {
+export default function ProcessStage({ number, icon, heading, body, variant, isLast = false }: Props) {
   const vs = VARIANT_STYLES[variant];
   const ts = TEXT_STYLES[variant];
 

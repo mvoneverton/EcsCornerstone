@@ -8,6 +8,7 @@ import {
   auditInquirySchema,
   fcaioInquirySchema,
   waitlistSchema,
+  waitlistConvertSchema,
   checkoutSessionSchema,
 } from './schemas';
 
@@ -268,6 +269,31 @@ export async function joinWaitlist(req: Request, res: Response): Promise<void> {
   }
 
   res.status(201).json({ success: true });
+}
+
+// ── POST /api/marketing/waitlist-convert ─────────────────────────────────────
+// Used by /onboarding/register to greet visitors who are already on the
+// Cornerstone early-access waitlist. Returns only whether the email is known
+// and, if so, the first name we have on file.
+
+export async function waitlistConvert(req: Request, res: Response): Promise<void> {
+  const parsed = waitlistConvertSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: 'Validation failed', issues: parsed.error.issues });
+    return;
+  }
+
+  const { rows } = await pool.query<{ first_name: string }>(
+    `SELECT first_name FROM cornerstone_waitlist WHERE lower(email) = lower($1) LIMIT 1`,
+    [parsed.data.email],
+  );
+
+  if (rows.length > 0) {
+    res.json({ onWaitlist: true, firstName: rows[0].first_name });
+    return;
+  }
+
+  res.json({ onWaitlist: false });
 }
 
 // ── POST /api/stripe/create-checkout-session ──────────────────────────────────

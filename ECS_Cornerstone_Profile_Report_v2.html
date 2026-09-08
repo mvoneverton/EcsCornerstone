@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECS Cornerstone — Profile Report: Alex Rivera</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Serif+Display:ital@0;1&display=swap');
+
+  :root {
+    --navy:     #1B3A5C;
+    --accent:   #2E6DA4;
+    --teal:     #1F6B5A;
+    --coral:    #C0392B;
+    --amber:    #B7770D;
+    --gray:     #595959;
+    --border:   #C8D6E3;
+    --light-bg: #EEF3F8;
+    --alt-bg:   #F7F9FC;
+    --white:    #FFFFFF;
+    --navy-950: #0A1E3D;
+    --navy-900: #1A3A5C;
+    --gold-500: #D4AF37;
+    --gold-400: #C9A961;
+    --blue-gray: #8B9DB8;
+
+
+    --catalyst-bg:   #FEF9EC;
+    --catalyst-mid:  #EF9F27;
+    --catalyst-text: #7A4F06;
+    --vanguard-bg:   #FDF0EE;
+    --vanguard-mid:  #C0392B;
+    --vanguard-text: #7B1D12;
+    --cultivator-bg: #EBF4F1;
+    --cultivator-mid:#1F6B5A;
+    --cultivator-text:#0F3D2E;
+    --architect-bg:  #EEF3F8;
+    --architect-mid: #2E6DA4;
+    --architect-text:#1B3A5C;
+
+    --font-sans: 'DM Sans', Arial, sans-serif;
+    --font-serif: 'DM Serif Display', Georgia, serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: #2C2C2C;
+    background: #E8EDF3;
+    line-height: 1.6;
+  }
+
+  /* ── Page shells ────────────────────────────────────────────── */
+  .report-page {
+    width: 816px;
+    background: var(--white);
+    margin: 24px auto;
+    box-shadow: 0 4px 24px rgba(27,58,92,.12);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ── Running header ─────────────────────────────────────────── */
+  .running-header {
+    background: var(--navy);
+    padding: 14px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .running-header .brand { display: flex; align-items: baseline; gap: 6px; }
+  .running-header .brand-ecs { font-size: 16px; font-weight: 600; color: #fff; }
+  .running-header .brand-cornerstone { font-size: 16px; font-weight: 300; color: #9EC3E0; }
+  .running-header .hdr-right { font-size: 11px; color: #9EC3E0; font-style: italic; }
+
+  /* ── Running footer ─────────────────────────────────────────── */
+  .running-footer {
+    border-top: 1px solid var(--border);
+    padding: 10px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    color: #9AAEC2;
+  }
+
+  /* ── Page body padding ──────────────────────────────────────── */
+  .page-body { padding: 40px 40px 24px; }
+
+  /* ── Typography helpers ─────────────────────────────────────── */
+  .section-title {
+    font-family: var(--font-serif);
+    font-size: 26px;
+    color: var(--navy);
+    margin-bottom: 6px;
+    letter-spacing: -.3px;
+  }
+  .section-divider {
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+    margin-bottom: 20px;
+    border-radius: 2px;
+  }
+  .section-divider.teal { background: linear-gradient(90deg, var(--teal) 0%, transparent 100%); }
+  .section-divider.coral { background: linear-gradient(90deg, var(--coral) 0%, transparent 100%); }
+  .section-divider.amber { background: linear-gradient(90deg, var(--amber) 0%, transparent 100%); }
+
+  .body-text { font-size: 13px; color: #3A3A3A; line-height: 1.75; margin-bottom: 14px; }
+  .sub-heading { font-size: 15px; font-weight: 600; color: var(--navy); margin: 20px 0 8px; }
+
+  /* ── Profile badge chips ────────────────────────────────────── */
+  .badge {
+    display: inline-flex; flex-direction: column;
+    padding: 10px 16px; border-radius: 8px;
+    border-left: 4px solid;
+  }
+  .badge .badge-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .6px; opacity: .7; }
+  .badge .badge-primary { font-size: 20px; font-weight: 600; }
+  .badge .badge-secondary { font-size: 13px; font-weight: 400; opacity: .75; }
+
+  .badge.catalyst  { background: var(--catalyst-bg);  border-color: var(--catalyst-mid);  color: var(--catalyst-text);  }
+  .badge.vanguard  { background: var(--vanguard-bg);  border-color: var(--vanguard-mid);  color: var(--vanguard-text);  }
+  .badge.cultivator{ background: var(--cultivator-bg);border-color: var(--cultivator-mid);color: var(--cultivator-text);}
+  .badge.architect { background: var(--architect-bg); border-color: var(--architect-mid); color: var(--architect-text); }
+
+  /* ── Info box ───────────────────────────────────────────────── */
+  .info-box {
+    border-left: 4px solid var(--accent);
+    background: var(--light-bg);
+    padding: 14px 18px;
+    border-radius: 0 6px 6px 0;
+    font-size: 12.5px;
+    color: #3A3A3A;
+    line-height: 1.7;
+    margin: 16px 0;
+  }
+  .info-box.amber { border-color: var(--amber); background: #FEF9EC; }
+  .info-box.teal  { border-color: var(--teal);  background: #EBF4F1; }
+  .info-box.coral { border-color: var(--coral); background: #FDF0EE; }
+
+  /* ── Growth bullet ──────────────────────────────────────────── */
+  .growth-item { display: flex; gap: 12px; margin-bottom: 14px; }
+  .growth-item .growth-label {
+    flex-shrink: 0;
+    font-size: 12px; font-weight: 600;
+    color: var(--accent);
+    min-width: 140px;
+    padding-top: 1px;
+  }
+  .growth-item .growth-body { font-size: 13px; color: #3A3A3A; line-height: 1.7; }
+
+  /* ── Communication strategy row ─────────────────────────────── */
+  .strategy-row { display: flex; gap: 16px; margin-bottom: 16px; }
+  .strategy-box {
+    flex: 1; padding: 16px 18px; border-radius: 8px;
+    border-top: 3px solid;
+  }
+  .strategy-box.decrease-a { background: #FDF0EE; border-color: var(--coral); }
+  .strategy-box.decrease-r { background: var(--light-bg); border-color: var(--accent); }
+  .strategy-box h4 { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+  .strategy-box h4.coral { color: var(--coral); }
+  .strategy-box h4.accent { color: var(--accent); }
+  .strategy-box ul { list-style: none; padding: 0; }
+  .strategy-box ul li {
+    font-size: 12px; color: #3A3A3A; line-height: 1.65;
+    padding: 5px 0; border-bottom: 1px solid rgba(0,0,0,.06);
+    display: flex; gap: 8px;
+  }
+  .strategy-box ul li:last-child { border-bottom: none; }
+  .strategy-box ul li::before { content: "→"; opacity: .5; flex-shrink: 0; }
+
+  /* ── Print ──────────────────────────────────────────────────── */
+  @media print {
+    body { background: #fff; }
+    .report-page { margin: 0; box-shadow: none; border-radius: 0; page-break-after: always; width: 100%; }
+    .report-page:last-child { page-break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- PAGE 1 — COVER + SUMMARY                                     -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="report-page">
+  <div class="running-header">
+    <div class="brand">
+      <span class="brand-ecs">ECS</span>
+      <span class="brand-cornerstone">Cornerstone</span>
+    </div>
+    <span class="hdr-right">Cornerstone Profile Report &nbsp;·&nbsp; Alex Rivera</span>
+  </div>
+
+  <div class="page-body">
+
+    <!-- Cover block -->
+    <div style="background:linear-gradient(135deg,#1B3A5C 0%,#2E6DA4 100%);border-radius:10px;padding:36px 40px 32px;margin-bottom:32px;position:relative;overflow:hidden;">
+      <div style="position:absolute;right:-40px;top:-40px;width:220px;height:220px;background:rgba(255,255,255,.04);border-radius:50%;"></div>
+      <div style="position:absolute;right:40px;bottom:-60px;width:140px;height:140px;background:rgba(255,255,255,.04);border-radius:50%;"></div>
+      <div style="font-size:11px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:#9EC3E0;margin-bottom:12px;">ECS Cornerstone &nbsp;·&nbsp; Everton Consulting Services</div>
+      <div style="font-family:'DM Serif Display',Georgia,serif;font-size:36px;color:#fff;line-height:1.1;margin-bottom:8px;">Cornerstone<br>Profile Report</div>
+      <div style="font-size:22px;font-weight:300;color:#9EC3E0;margin-bottom:4px;">Alex Rivera</div>
+      <div style="font-size:13px;color:#7A9FBF;">January 2025</div>
+    </div>
+
+    <!-- Three-perspective badges -->
+    <div style="margin-bottom:28px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--gray);margin-bottom:14px;">Your profile — three perspectives</div>
+      <div style="display:flex;gap:16px;">
+        <div class="badge catalyst" style="flex:1;">
+          <span class="badge-label">How you see yourself</span>
+          <span class="badge-primary">Catalyst</span>
+          <span class="badge-secondary">/ Vanguard</span>
+        </div>
+        <div class="badge vanguard" style="flex:1;">
+          <span class="badge-label">How others see you</span>
+          <span class="badge-primary">Vanguard</span>
+          <span class="badge-secondary">/ Catalyst</span>
+        </div>
+        <div class="badge catalyst" style="flex:1;">
+          <span class="badge-label">Behavior at work</span>
+          <span class="badge-primary">Catalyst</span>
+          <span class="badge-secondary">/ Vanguard</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- A/R Quadrant Chart -->
+    <div style="margin-bottom:28px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--gray);margin-bottom:14px;">Assertiveness / Responsiveness quadrant</div>
+      <div style="display:flex;gap:24px;align-items:flex-start;">
+
+        <!-- SVG chart -->
+        <div style="flex-shrink:0;">
+          <svg width="340" height="340" viewBox="0 0 340 340" xmlns="http://www.w3.org/2000/svg">
+            <!-- Quadrant fills -->
+            <rect x="20" y="20"  width="145" height="145" rx="4" fill="#FEF9EC" opacity=".9"/><!-- top-left = Catalyst (H-R, L-A... wait) -->
+            <rect x="175" y="20"  width="145" height="145" rx="4" fill="#FEF9EC" opacity=".9"/><!-- top-right = Catalyst -->
+            <!-- Actually: right=high A, top=high R -->
+            <!-- TL: Low A, High R = Cultivator -->
+            <!-- TR: High A, High R = Catalyst -->
+            <!-- BL: Low A, Low R = Architect -->
+            <!-- BR: High A, Low R = Vanguard -->
+            <!-- Redo -->
+            <rect x="20"  y="20"  width="145" height="145" rx="4" fill="#EBF4F1" opacity=".85"/><!-- TL Cultivator -->
+            <rect x="175" y="20"  width="145" height="145" rx="4" fill="#FEF9EC" opacity=".85"/><!-- TR Catalyst -->
+            <rect x="20"  y="175" width="145" height="145" rx="4" fill="#EEF3F8" opacity=".85"/><!-- BL Architect -->
+            <rect x="175" y="175" width="145" height="145" rx="4" fill="#FDF0EE" opacity=".85"/><!-- BR Vanguard -->
+
+            <!-- Quadrant labels -->
+            <text x="92"  y="48" text-anchor="middle" font-family="DM Sans, Arial" font-size="11" font-weight="600" fill="#1F6B5A" opacity=".9">Cultivator</text>
+            <text x="248" y="48" text-anchor="middle" font-family="DM Sans, Arial" font-size="11" font-weight="600" fill="#B7770D" opacity=".9">Catalyst</text>
+            <text x="92"  y="315" text-anchor="middle" font-family="DM Sans, Arial" font-size="11" font-weight="600" fill="#2E6DA4" opacity=".9">Architect</text>
+            <text x="248" y="315" text-anchor="middle" font-family="DM Sans, Arial" font-size="11" font-weight="600" fill="#C0392B" opacity=".9">Vanguard</text>
+
+            <!-- Grid lines -->
+            <line x1="20" y1="170" x2="320" y2="170" stroke="#C8D6E3" stroke-width=".8" stroke-dasharray="3 3"/>
+            <line x1="170" y1="20" x2="170" y2="320" stroke="#C8D6E3" stroke-width=".8" stroke-dasharray="3 3"/>
+
+            <!-- Axis ticks / labels -->
+            <!-- X axis (Assertiveness) -->
+            <line x1="20" y1="322" x2="320" y2="322" stroke="#C8D6E3" stroke-width="1"/>
+            <text x="20"  y="334" text-anchor="middle" font-family="DM Sans, Arial" font-size="9" fill="#9AAEC2">Low A</text>
+            <text x="170" y="334" text-anchor="middle" font-family="DM Sans, Arial" font-size="9" fill="#9AAEC2">Assertiveness →</text>
+            <text x="320" y="334" text-anchor="middle" font-family="DM Sans, Arial" font-size="9" fill="#9AAEC2">High A</text>
+
+            <!-- Y axis (Responsiveness) -->
+            <line x1="18" y1="20" x2="18" y2="320" stroke="#C8D6E3" stroke-width="1"/>
+            <text x="10" y="320" text-anchor="middle" font-family="DM Sans, Arial" font-size="9" fill="#9AAEC2" transform="rotate(-90,10,320)" dy="-2">Low R</text>
+            <text x="10" y="170" text-anchor="middle" font-family="DM Sans, Arial" font-size="9" fill="#9AAEC2" transform="rotate(-90,10,170)">Responsiveness ↑</text>
+            <text x="10" y="22" text-anchor="middle" font-family="DM Sans, Arial" font-size="9" fill="#9AAEC2" transform="rotate(-90,10,22)" dy="-2">High R</text>
+
+            <!-- ── Plot the three perspectives ──
+                 Chart area: x 20→320 (300px wide), y 20→320 (300px tall)
+                 x = 20 + (A_percentile/100)*300
+                 y = 320 - (R_percentile/100)*300   (inverted: high R = top)
+
+                 How You See Yourself: A=71, R=61 → x=20+71*3=233, y=320-61*3=137
+                 How Others See You:   A=69, R=53 → x=20+69*3=227, y=320-53*3=161
+                 Behavior at Work:     A=67, R=55 (Catalyst/Vanguard) → x=20+67*3=221, y=320-55*3=155
+                 Wait — let me use the sample scores from profile_report.js:
+                 self:   Vanguard:524/800, Catalyst:568/800, Cultivator:142/800, Architect:388/800
+                 others: Vanguard:552/800, Catalyst:448/800, Cultivator:168/800, Architect:214/800
+                 work:   Vanguard:536/800, Catalyst:790/800, Cultivator:146/800, Architect:358/800
+
+                 Convert back to A/R percentiles using profile scores:
+                 A% = (Vanguard_score + Catalyst_score) / 1600 × 100
+                 R% = (Catalyst_score + Cultivator_score) / 1600 × 100
+
+                 Self:   A=(524+568)/1600=68.3%, R=(568+142)/1600=44.4% → x=225, y=187
+                 Others: A=(552+448)/1600=62.5%, R=(448+168)/1600=38.5% → x=208, y=204
+                 Work:   A=(536+790)/1600=82.9%, R=(790+146)/1600=58.5% → x=269, y=145
+            -->
+
+            <!-- Connection line between dots -->
+            <line x1="225" y1="187" x2="208" y2="204" stroke="#C8D6E3" stroke-width="1" stroke-dasharray="3 3"/>
+            <line x1="208" y1="204" x2="269" y2="145" stroke="#C8D6E3" stroke-width="1" stroke-dasharray="3 3"/>
+            <line x1="225" y1="187" x2="269" y2="145" stroke="#C8D6E3" stroke-width="1" stroke-dasharray="3 3"/>
+
+            <!-- How You See Yourself: A=68%, R=44% -->
+            <circle cx="225" cy="187" r="9" fill="#B7770D" opacity=".9"/>
+            <circle cx="225" cy="187" r="5" fill="#FEF9EC"/>
+            <text x="230" y="178" font-family="DM Sans, Arial" font-size="9" font-weight="600" fill="#B7770D">Self</text>
+
+            <!-- How Others See You: A=63%, R=39% -->
+            <circle cx="208" cy="204" r="9" fill="#C0392B" opacity=".9"/>
+            <circle cx="208" cy="204" r="5" fill="#FDF0EE"/>
+            <text x="214" y="216" font-family="DM Sans, Arial" font-size="9" font-weight="600" fill="#C0392B">Others</text>
+
+            <!-- Behavior at Work: A=83%, R=59% -->
+            <circle cx="269" cy="145" r="11" fill="#1B3A5C" opacity=".9"/>
+            <circle cx="269" cy="145" r="5.5" fill="#EEF3F8"/>
+            <text x="276" y="140" font-family="DM Sans, Arial" font-size="9" font-weight="600" fill="#1B3A5C">Work</text>
+
+            <!-- Legend note -->
+            <circle cx="28" cy="338" r="5" fill="#1B3A5C" opacity=".8"/>
+            <text x="38" y="341" font-family="DM Sans, Arial" font-size="9" fill="#9AAEC2">Work (primary)</text>
+            <circle cx="110" cy="338" r="4" fill="#B7770D" opacity=".8"/>
+            <text x="120" y="341" font-family="DM Sans, Arial" font-size="9" fill="#9AAEC2">Self</text>
+            <circle cx="150" cy="338" r="4" fill="#C0392B" opacity=".8"/>
+            <text x="160" y="341" font-family="DM Sans, Arial" font-size="9" fill="#9AAEC2">Others</text>
+          </svg>
+        </div>
+
+        <!-- Profile reading -->
+        <div style="flex:1;padding-top:8px;">
+          <div style="font-size:13px;color:#3A3A3A;line-height:1.75;margin-bottom:16px;">
+            All three perspectives place Alex in the <strong style="color:var(--navy);">Catalyst/Vanguard</strong> zone — high Assertiveness, moderately high Responsiveness. The Work dot sits noticeably further right and higher than the Self and Others dots, indicating that work pressure amplifies Alex's assertive and expressive tendencies.
+          </div>
+          <div style="font-size:13px;color:#3A3A3A;line-height:1.75;margin-bottom:16px;">
+            The gap between <em>How Others See You</em> and <em>Behavior at Work</em> is the most significant finding — others experience Alex as somewhat more restrained than Alex actually behaves under work conditions.
+          </div>
+          <div class="info-box" style="margin-top:0;">
+            <strong>Reading the chart:</strong> Your primary profile is determined by the Work dot — the perspective that reflects your actual behavioral output under real work conditions. The farther a dot is from center, the stronger your lean on those axes.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="running-footer">
+    <span>© 2025 Everton Consulting Services &nbsp;·&nbsp; ECS Cornerstone &nbsp;·&nbsp; Confidential</span>
+    <span>Page 1</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- PAGE 2 — PROFILE GRAPHS                                      -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="report-page">
+  <div class="running-header">
+    <div class="brand">
+      <span class="brand-ecs">ECS</span>
+      <span class="brand-cornerstone">Cornerstone</span>
+    </div>
+    <span class="hdr-right">Profile Graphs &nbsp;·&nbsp; Alex Rivera</span>
+  </div>
+  <div class="page-body">
+
+    <div class="section-title">Profile Graphs</div>
+    <div class="section-divider"></div>
+    <p class="body-text">Each bar shows the strength of one Cornerstone profile pattern in your responses. Scores range from 0 to 800. The primary profile in each perspective is the longest bar.</p>
+
+    <!-- Score legend -->
+    <div style="display:flex;gap:0;margin-bottom:28px;border-radius:8px;overflow:hidden;border:1px solid var(--border);">
+      <div style="flex:1;background:#F7F9FC;padding:10px 12px;border-right:1px solid var(--border);">
+        <div style="font-size:10px;font-weight:600;color:var(--navy);margin-bottom:2px;">650 – 800</div>
+        <div style="font-size:11px;color:var(--gray);">High Usage — dominant, immediately visible</div>
+      </div>
+      <div style="flex:1;background:var(--white);padding:10px 12px;border-right:1px solid var(--border);">
+        <div style="font-size:10px;font-weight:600;color:var(--navy);margin-bottom:2px;">500 – 650</div>
+        <div style="font-size:11px;color:var(--gray);">Medium — used frequently</div>
+      </div>
+      <div style="flex:1;background:#F7F9FC;padding:10px 12px;border-right:1px solid var(--border);">
+        <div style="font-size:10px;font-weight:600;color:var(--navy);margin-bottom:2px;">300 – 500</div>
+        <div style="font-size:11px;color:var(--gray);">Low / Situational — used selectively</div>
+      </div>
+      <div style="flex:1;background:var(--white);padding:10px 12px;">
+        <div style="font-size:10px;font-weight:600;color:var(--navy);margin-bottom:2px;">0 – 300</div>
+        <div style="font-size:11px;color:var(--gray);">Seldom used</div>
+      </div>
+    </div>
+
+    <!-- Three perspective charts -->
+    <div style="display:flex;gap:24px;">
+
+      <!-- How You See Yourself -->
+      <div style="flex:1;">
+        <div style="font-size:12px;font-weight:600;color:var(--amber);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;padding-bottom:6px;border-bottom:2px solid var(--amber);">How you see yourself</div>
+        <div id="bars-self"></div>
+        <!-- Bars: Catalyst 568, Vanguard 524, Cultivator 142, Architect 388 -->
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--navy);font-weight:600;margin-bottom:4px;"><span>Catalyst</span><span style="color:#B7770D;">568</span></div>
+          <div style="background:#EEF3F8;border-radius:4px;height:14px;overflow:hidden;"><div style="background:#EF9F27;height:100%;width:71%;border-radius:4px;"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--navy);font-weight:600;margin-bottom:4px;"><span>Vanguard</span><span style="color:#C0392B;">524</span></div>
+          <div style="background:#EEF3F8;border-radius:4px;height:14px;overflow:hidden;"><div style="background:#C0392B;height:100%;width:65.5%;border-radius:4px;"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--navy);font-weight:600;margin-bottom:4px;"><span>Architect</span><span style="color:#2E6DA4;">388</span></div>
+          <div style="background:#EEF3F8;border-radius:4px;height:14px;overflow:hidden;"><div style="background:#2E6DA4;height:100%;width:48.5%;border-radius:4px;"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--navy);font-weight:600;margin-bottom:4px;"><span>Cultivator</span><span style="color:#1F6B5A;">142</span></div>
+          <div style="background:#EEF3F8;border-radius:4px;height:14px;overflow:hidden;"><div style="background:#1F6B5A;height:100%;width:17.75%;border-radius:4px;"></div></div>
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:var(--gray);font-style:italic;">Primary: <strong style="color:var(--amber);">Catalyst</strong> &nbsp;/&nbsp; <span>Vanguard</span></div>
+      </div>
+
+      <!-- How Others See You -->
+      <div style="flex:1;">
+        <div style="font-size:12px;font-weight:600;color:var(--coral);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;padding-bottom:6px;border-bottom:2px solid var(--coral);">How others see you</div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--navy);font-weight:600;margin-bottom:4px;"><span>Vanguard</span><span style="color:#C0392B;">552</span></div>
+          <div style="background:#EEF3F8;border-radius:4px;height:14px;overflow:hidden;"><div style="background:#C0392B;height:100%;width:69%;border-radius:4px;"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--navy);font-weight:600;margin-bottom:4px;"><span>Catalyst</span><span style="color:#B7770D;">448</span></div>
+          <div style="background:#EEF3F8;border-radius:4px;height:14px;overflow:hidden;"><div style="background:#EF9F27;height:100%;width:56%;border-radius:4px;"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--navy);font-weight:600;margin-bottom:4px;"><span>Architect</span><span style="color:#2E6DA4;">214</span></div>
+          <div style="background:#EEF3F8;border-radius:4px;height:14px;overflow:hidden;"><div style="background:#2E6DA4;height:100%;width:26.75%;border-radius:4px;"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--navy);font-weight:600;margin-bottom:4px;"><span>Cultivator</span><span style="color:#1F6B5A;">168</span></div>
+          <div style="background:#EEF3F8;border-radius:4px;height:14px;overflow:hidden;"><div style="background:#1F6B5A;height:100%;width:21%;border-radius:4px;"></div></div>
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:var(--gray);font-style:italic;">Primary: <strong style="color:var(--coral);">Vanguard</strong> &nbsp;/&nbsp; <span>Catalyst</span></div>
+      </div>
+
+      <!-- Behavior at Work -->
+      <div style="flex:1;">
+        <div style="font-size:12px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;padding-bottom:6px;border-bottom:2px solid var(--navy);">Behavior at work</div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--navy);font-weight:600;margin-bottom:4px;"><span>Catalyst</span><span style="color:#B7770D;">790</span></div>
+          <div style="background:#EEF3F8;border-radius:4px;height:14px;overflow:hidden;"><div style="background:#EF9F27;height:100%;width:98.75%;border-radius:4px;"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--navy);font-weight:600;margin-bottom:4px;"><span>Vanguard</span><span style="color:#C0392B;">536</span></div>
+          <div style="background:#EEF3F8;border-radius:4px;height:14px;overflow:hidden;"><div style="background:#C0392B;height:100%;width:67%;border-radius:4px;"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--navy);font-weight:600;margin-bottom:4px;"><span>Architect</span><span style="color:#2E6DA4;">358</span></div>
+          <div style="background:#EEF3F8;border-radius:4px;height:14px;overflow:hidden;"><div style="background:#2E6DA4;height:100%;width:44.75%;border-radius:4px;"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--navy);font-weight:600;margin-bottom:4px;"><span>Cultivator</span><span style="color:#1F6B5A;">146</span></div>
+          <div style="background:#EEF3F8;border-radius:4px;height:14px;overflow:hidden;"><div style="background:#1F6B5A;height:100%;width:18.25%;border-radius:4px;"></div></div>
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:var(--gray);font-style:italic;">Primary: <strong style="color:var(--navy);">Catalyst</strong> &nbsp;/&nbsp; <span>Vanguard</span></div>
+      </div>
+
+    </div>
+
+    <!-- Perspective key callout -->
+    <div class="info-box" style="margin-top:28px;">
+      <strong>Three perspectives explained:</strong> &nbsp; How You See Yourself reflects the traits you consciously identify with. How Others See You reflects what people around you observe. Behavior at Work reflects your actual behavioral output under work conditions — this is your primary profile and drives most of the report below.
+    </div>
+
+    <!-- Four profile mini descriptions -->
+    <div style="margin-top:28px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--gray);margin-bottom:14px;">The four Cornerstone profiles at a glance</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="background:var(--catalyst-bg);border-left:4px solid var(--catalyst-mid);border-radius:0 6px 6px 0;padding:12px 14px;">
+          <div style="font-size:13px;font-weight:600;color:var(--catalyst-text);margin-bottom:4px;">Catalyst &nbsp;<span style="font-weight:400;font-size:11px;opacity:.7;">High A · High R</span></div>
+          <div style="font-size:12px;color:#5A3A06;line-height:1.6;">Energetic, persuasive, people-focused. Natural motivators. Action-oriented and relationship-driven simultaneously.</div>
+        </div>
+        <div style="background:var(--vanguard-bg);border-left:4px solid var(--vanguard-mid);border-radius:0 6px 6px 0;padding:12px 14px;">
+          <div style="font-size:13px;font-weight:600;color:var(--vanguard-text);margin-bottom:4px;">Vanguard &nbsp;<span style="font-weight:400;font-size:11px;opacity:.7;">High A · Low R</span></div>
+          <div style="font-size:12px;color:#5A1A12;line-height:1.6;">Direct, decisive, results-driven. Task-focused and time-conscious. Leads through clarity and outcomes.</div>
+        </div>
+        <div style="background:var(--cultivator-bg);border-left:4px solid var(--cultivator-mid);border-radius:0 6px 6px 0;padding:12px 14px;">
+          <div style="font-size:13px;font-weight:600;color:var(--cultivator-text);margin-bottom:4px;">Cultivator &nbsp;<span style="font-weight:400;font-size:11px;opacity:.7;">Low A · High R</span></div>
+          <div style="font-size:12px;color:#0A2E20;line-height:1.6;">Warm, patient, people-oriented. Builds trust steadily. Creates harmony. Listens before acting.</div>
+        </div>
+        <div style="background:var(--architect-bg);border-left:4px solid var(--architect-mid);border-radius:0 6px 6px 0;padding:12px 14px;">
+          <div style="font-size:13px;font-weight:600;color:var(--architect-text);margin-bottom:4px;">Architect &nbsp;<span style="font-weight:400;font-size:11px;opacity:.7;">Low A · Low R</span></div>
+          <div style="font-size:12px;color:#0E2340;line-height:1.6;">Precise, systematic, thorough. Detail-oriented and disciplined. Motivated by accuracy and defined standards.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="running-footer">
+    <span>© 2025 Everton Consulting Services &nbsp;·&nbsp; ECS Cornerstone &nbsp;·&nbsp; Confidential</span>
+    <span>Page 2</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- PAGE 3 — HOW YOU SEE YOURSELF + HOW OTHERS SEE YOU          -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="report-page">
+  <div class="running-header">
+    <div class="brand"><span class="brand-ecs">ECS</span><span class="brand-cornerstone">Cornerstone</span></div>
+    <span class="hdr-right">How You See Yourself / How Others See You &nbsp;·&nbsp; Alex Rivera</span>
+  </div>
+  <div class="page-body">
+
+    <div class="section-title" style="color:var(--amber);">How You See Yourself</div>
+    <div class="section-divider amber"></div>
+
+    <div class="sub-heading">Outstanding traits</div>
+    <p class="body-text">Your primary self-profile is Catalyst/Vanguard. You are positive — naturally inclined to look at the bright side and find opportunity where others see obstacles. You are persuasive, using your ability to read people and situations to win others over. You are alert, constantly scanning for new developments and possibilities. And you are action-oriented — you do not wait for permission to pursue your ambitions.</p>
+    <p class="body-text">You thrive on challenge and variety. You set ambitious goals and pursue them with self-motivation and a willingness to take risks others might avoid. Relationships matter to you deeply, but when the stakes are high you shift into a more focused, directive mode. You are at your best when leading people toward a clear objective, rallying their energy and enthusiasm around a shared goal.</p>
+
+    <div class="sub-heading">Basic desires and motivation</div>
+    <p class="body-text">You are driven by the desire to influence — to have a meaningful impact on the people and situations around you. You want your voice to be heard and your ideas taken seriously. Recognition matters to you not out of vanity, but because it signals your contributions have made a difference.</p>
+    <div class="info-box amber">You prefer action over deliberation, big picture over supporting details, and people over process. You are most energized by creative, fast-moving environments where you can make decisions, take ownership, and see results quickly. Routine, rigid structures, and micromanagement drain you faster than almost anything else.</div>
+
+    <div style="height:20px;"></div>
+
+    <div class="section-title" style="color:var(--coral);margin-top:8px;">How Others See You</div>
+    <div class="section-divider coral"></div>
+
+    <div class="sub-heading">Outstanding traits</div>
+    <p class="body-text">Others experience your pattern as Vanguard/Catalyst. They see someone strong-willed and commanding — a person who enters a room and immediately shapes its direction. They recognize your intelligence and your ability to generate options for any challenge placed in front of you. They have likely been struck by your insistence on quality, and by your skill in organizing diverse thoughts into coherent action.</p>
+    <p class="body-text">Your secondary pattern softens your sharper edges. What might otherwise be experienced as demanding is tempered by genuine moments of warmth and encouragement — enough that people tend to experience you as motivating rather than autocratic. They hold themselves to higher standards around you because they know you will.</p>
+
+    <div class="sub-heading">What others are still learning about you</div>
+    <div class="info-box coral">Your restlessness — the constant search for a new challenge — can read as dissatisfaction or instability to those who don't know you well. Over time, they come to see it for what it is: a relentless appetite for growth. Until they do, they may misread your enthusiasm for new ideas as a lack of follow-through on current ones.</div>
+
+  </div>
+  <div class="running-footer">
+    <span>© 2025 Everton Consulting Services &nbsp;·&nbsp; ECS Cornerstone &nbsp;·&nbsp; Confidential</span>
+    <span>Page 3</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- PAGE 4 — BEHAVIOR AT WORK + AREAS FOR GROWTH               -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="report-page">
+  <div class="running-header">
+    <div class="brand"><span class="brand-ecs">ECS</span><span class="brand-cornerstone">Cornerstone</span></div>
+    <span class="hdr-right">Behavior at Work / Areas for Growth &nbsp;·&nbsp; Alex Rivera</span>
+  </div>
+  <div class="page-body">
+
+    <div class="section-title" style="color:var(--teal);">Behavior at Work</div>
+    <div class="section-divider teal"></div>
+
+    <div class="sub-heading">Outstanding traits at work</div>
+    <p class="body-text">In a work environment, your pattern is Catalyst/Vanguard with a Catalyst score of 790 — the highest-usage range, meaning this pattern is immediately visible to everyone around you. Your natural leadership ability comes to the forefront. You focus well on goals and objectives, always keeping the overall project in mind while persuading and motivating those around you.</p>
+    <p class="body-text">Your willingness to take risks serves you especially well at work — it positions you for leadership roles and makes you a credible voice when others are hesitant to act. When the pressure is on, your mind moves fast. Even at your most task-focused, your empathy remains present enough to prevent you from becoming ruthless.</p>
+
+    <div class="sub-heading">How pressure changes you</div>
+    <div class="info-box teal">Under work pressure you operate in intense bursts — executing at near-frantic pace, then stepping back to reconnect with the people around you. You are a big-picture thinker by nature. When colleagues present long lists of supporting details, you find yourself asking what it all means rather than absorbing each item. This is not a weakness — it is the signature of someone who needs to see the forest first.</div>
+
+    <div style="height:20px;"></div>
+
+    <div class="section-title" style="margin-top:8px;">Areas for Growth</div>
+    <div class="section-divider"></div>
+
+    <p class="body-text">None of us is without blind spots. The goal of this section is to give you specific, honest information about how your natural patterns may land with others — so you can make informed choices about when and how to adapt.</p>
+
+    <div class="growth-item">
+      <div class="growth-label">Independent decision-making</div>
+      <div class="growth-body">Your independent nature can make it difficult to genuinely absorb the input of others. You may have developed a pattern of deciding on a course of action before seriously weighing perspectives that differ from your own. Under stress, this can tip from confidence into rigidity — and others will notice when it does.</div>
+    </div>
+    <div class="growth-item">
+      <div class="growth-label">Active listening</div>
+      <div class="growth-body">Your listening skills, while present, may not keep pace with the speed of your thinking. When someone else is speaking and an idea arrives in your mind, your instinct is to say it — now. This can read as dismissive, even when you are genuinely engaged. The impact is often larger than you intend.</div>
+    </div>
+    <div class="growth-item">
+      <div class="growth-label">Managing perception</div>
+      <div class="growth-body">Under stressful conditions, your sharp verbal skills and quick mental pace may produce remarks that land as cutting or dismissive, even when your intent was simply to move things forward. Because you can repair relationships quickly, you may underestimate how much the initial damage lingers for others.</div>
+    </div>
+    <div class="growth-item">
+      <div class="growth-label">Visible empathy</div>
+      <div class="growth-body">At your lowest moments, others may experience you as arrogant, impatient, or dismissive of their contributions. The antidote is not to become less confident, but to let your natural empathy be more visible in the moments that count most.</div>
+    </div>
+
+  </div>
+  <div class="running-footer">
+    <span>© 2025 Everton Consulting Services &nbsp;·&nbsp; ECS Cornerstone &nbsp;·&nbsp; Confidential</span>
+    <span>Page 4</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- PAGE 5 — EFFECTIVE COMMUNICATION                            -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="report-page">
+  <div class="running-header">
+    <div class="brand"><span class="brand-ecs">ECS</span><span class="brand-cornerstone">Cornerstone</span></div>
+    <span class="hdr-right">Effective Communication &nbsp;·&nbsp; Alex Rivera</span>
+  </div>
+  <div class="page-body">
+
+    <div class="section-title">Effective Communication with Others</div>
+    <div class="section-divider"></div>
+
+    <p class="body-text">ECS Cornerstone is built on the understanding that no single communication pattern is better than another — they are simply different. Effective communication means temporarily adjusting your natural Assertiveness and Responsiveness to meet others where they are. As a Catalyst/Vanguard, you are naturally high in both axes. The strategies below help you communicate more effectively when the situation calls for a different approach.</p>
+
+    <div class="strategy-row">
+      <div class="strategy-box decrease-a">
+        <h4 class="coral">When you need to decrease Assertiveness</h4>
+        <ul>
+          <li>Ask more, tell less — reframe directives as questions without losing your destination</li>
+          <li>Listen without interrupting — note thoughts mentally and wait for the speaker to finish</li>
+          <li>Allow others to express opinions before you do; even a brief pause signals genuine interest</li>
+          <li>Reduce your pace — physically, verbally, and in decision-making</li>
+          <li>Allow others to assume leadership temporarily; it builds teams that function without you</li>
+        </ul>
+      </div>
+      <div class="strategy-box decrease-r">
+        <h4 class="accent">When you need to decrease Responsiveness</h4>
+        <ul>
+          <li>Lead with facts — some profiles trust data more than enthusiasm; present numbers before vision</li>
+          <li>Control emotional expression in high-stakes conversations; steadiness signals competence</li>
+          <li>Focus on task completion over relationship maintenance in time-sensitive situations</li>
+          <li>Maintain professional boundaries even with people you genuinely care about</li>
+          <li>Pause before verbalizing — ten seconds of deliberation often produces a more trusted response</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Communicating with each profile -->
+    <div style="margin-top:24px;font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--gray);margin-bottom:14px;">Adapting to each Cornerstone profile</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+      <div style="border:1px solid #F5C4B3;border-radius:8px;overflow:hidden;">
+        <div style="background:#FDF0EE;padding:10px 14px;border-bottom:1px solid #F5C4B3;">
+          <span style="font-size:12px;font-weight:600;color:var(--vanguard-text);">When communicating with a Vanguard</span>
+        </div>
+        <div style="padding:12px 14px;font-size:12px;color:#3A3A3A;line-height:1.7;">
+          Be direct and brief. Lead with the conclusion. Respect their time visibly. Avoid personal tangents. Give them room to make the final call when possible — they need ownership to stay engaged.
+        </div>
+      </div>
+
+      <div style="border:1px solid #FAC775;border-radius:8px;overflow:hidden;">
+        <div style="background:#FEF9EC;padding:10px 14px;border-bottom:1px solid #FAC775;">
+          <span style="font-size:12px;font-weight:600;color:var(--catalyst-text);">When communicating with a Catalyst</span>
+        </div>
+        <div style="padding:12px 14px;font-size:12px;color:#3A3A3A;line-height:1.7;">
+          Match their energy, but be careful not to let the conversation become all rapport and no resolution. Bring enthusiasm but anchor it in outcomes. Let them talk — and then redirect to the decision.
+        </div>
+      </div>
+
+      <div style="border:1px solid #9FE1CB;border-radius:8px;overflow:hidden;">
+        <div style="background:#EBF4F1;padding:10px 14px;border-bottom:1px solid #9FE1CB;">
+          <span style="font-size:12px;font-weight:600;color:var(--cultivator-text);">When communicating with a Cultivator</span>
+        </div>
+        <div style="padding:12px 14px;font-size:12px;color:#3A3A3A;line-height:1.7;">
+          Slow down. Show genuine interest in them as a person before getting to the task. Avoid ultimatums and pressure for immediate decisions — they need time to process. Avoid raising your voice or expressing frustration visibly.
+        </div>
+      </div>
+
+      <div style="border:1px solid #B5D4F4;border-radius:8px;overflow:hidden;">
+        <div style="background:#EEF3F8;padding:10px 14px;border-bottom:1px solid #B5D4F4;">
+          <span style="font-size:12px;font-weight:600;color:var(--architect-text);">When communicating with an Architect</span>
+        </div>
+        <div style="padding:12px 14px;font-size:12px;color:#3A3A3A;line-height:1.7;">
+          Bring data. Be precise. Avoid vague language and big-picture hand-waving — they need specifics to trust a conclusion. Give them time to review before asking for a decision. Acknowledge their thoroughness explicitly.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Closing note -->
+    <div class="info-box" style="margin-top:24px;">
+      <strong>A final note:</strong> &nbsp; Understanding your ECS Cornerstone profile is the beginning, not the destination. Your natural patterns are genuine strengths. The strategies in this report are tools you pick up when the situation calls for them, then set down again. Use this profile as a starting point for ongoing conversations with your team, your manager, and your coach.
+    </div>
+
+  </div>
+  <div class="running-footer">
+    <span>© 2025 Everton Consulting Services &nbsp;·&nbsp; ECS Cornerstone &nbsp;·&nbsp; Confidential</span>
+    <span>Page 5</span>
+  </div>
+</div>
+
+</body>
+</html>

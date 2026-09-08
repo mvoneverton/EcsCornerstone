@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import stripeClient from './stripe';
 import { requireAuth } from '../middleware';
 import {
+  handleCheckoutSessionCompleted,
   handleSubscriptionUpdated,
   handleSubscriptionDeleted,
   handleInvoiceUpcoming,
@@ -38,6 +39,9 @@ router.post('/webhook', async (req, res) => {
 
   try {
     switch (event.type) {
+      case 'checkout.session.completed':
+        await handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
+        break;
       case 'customer.subscription.updated':
         await handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
         break;

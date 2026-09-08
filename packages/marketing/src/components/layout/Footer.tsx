@@ -63,16 +63,29 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 pt-8 border-t border-navy-800 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-blue-gray">
-            © {new Date().getFullYear()} Everton Consulting Services. All rights reserved.
-          </p>
-          <p className="text-xs text-blue-gray">
-            Built on{' '}
-            <Link to="/cornerstone" className="hover:text-gold-400 transition-colors underline underline-offset-2">
-              ECS Cornerstone
+        <div className="mt-12 pt-8 border-t border-navy-800 flex flex-col gap-4">
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <Link to="/legal/terms" className="text-xs text-blue-gray hover:text-gold-400 transition-colors">
+              Terms of Service
             </Link>
-          </p>
+            <Link to="/legal/privacy" className="text-xs text-blue-gray hover:text-gold-400 transition-colors">
+              Privacy Policy
+            </Link>
+            <Link to="/legal/dpa" className="text-xs text-blue-gray hover:text-gold-400 transition-colors">
+              Data Processing Agreement
+            </Link>
+          </div>
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p className="text-xs text-blue-gray">
+              © {new Date().getFullYear()} Everton Consulting Services. All rights reserved.
+            </p>
+            <p className="text-xs text-blue-gray">
+              Built on{' '}
+              <Link to="/cornerstone" className="hover:text-gold-400 transition-colors underline underline-offset-2">
+                ECS Cornerstone
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </footer>

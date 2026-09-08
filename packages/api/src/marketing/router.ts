@@ -4,6 +4,7 @@ import {
   createAssessmentInquiry,
   createFcaioInquiry,
   joinWaitlist,
+  waitlistConvert,
   createCheckoutSession,
   getCheckoutSession,
 } from './handlers';
@@ -37,6 +38,7 @@ router.post('/audit/inquiry', (_req: Request, res: Response) => {
 
 router.post('/fcaio/inquiry', createFcaioInquiry);
 router.post('/waitlist',      joinWaitlist);
+router.post('/marketing/waitlist-convert', waitlistConvert);
 
 // ── Legacy agent reservation checkout (Reserve page) ─────────────────────────
 

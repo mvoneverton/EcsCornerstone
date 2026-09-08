@@ -1,10 +1,86 @@
 import type Stripe from 'stripe';
 import pool from '../db/client';
+import stripe from './stripe';
+import { sendWelcomeEmail } from '../lib/email';
 import {
   companyByStripeCustomer,
   planByStripePrice,
   reportOveragesForPeriod,
 } from './usage';
+
+// ── Onboarding checkout ────────────────────────────────────────────────────────
+
+export async function handleCheckoutSessionCompleted(
+  session: Stripe.Checkout.Session
+): Promise<void> {
+  const companyId = session.metadata?.companyId;
+  if (!companyId) {
+    console.warn(`[billing] checkout.session.completed — no companyId in metadata (session ${session.id})`);
+    return;
+  }
+
+  const subscriptionId = typeof session.subscription === 'string'
+    ? session.subscription
+    : session.subscription?.id;
+  if (!subscriptionId) {
+    console.warn(`[billing] checkout.session.completed — no subscription on session ${session.id}`);
+    return;
+  }
+
+  const sub = await stripe.subscriptions.retrieve(subscriptionId);
+
+  await pool.query(
+    `UPDATE companies SET
+       subscription_status    = 'active',
+       stripe_subscription_id = $1,
+       current_period_end     = $2,
+       updated_at              = now()
+     WHERE id = $3`,
+    [subscriptionId, new Date(sub.current_period_end * 1000), companyId]
+  );
+
+  console.log(`[billing] checkout completed — company ${companyId} activated (subscription ${subscriptionId})`);
+
+  // Welcome email to the new company_admin — best effort, never blocks activation.
+  try {
+    const { rows: [row] } = await pool.query<{
+      company_name: string;
+      admin_first_name: string | null;
+      admin_email: string | null;
+      plan_name: string | null;
+      assessment_limit_monthly: number | null;
+    }>(
+      `SELECT c.name AS company_name,
+              p.name AS plan_name,
+              p.assessment_limit_monthly,
+              admin.first_name AS admin_first_name,
+              admin.email      AS admin_email
+       FROM companies c
+       LEFT JOIN plans p ON p.id = c.plan_id
+       LEFT JOIN LATERAL (
+         SELECT first_name, email FROM users
+         WHERE company_id = c.id AND role = 'company_admin' AND deleted_at IS NULL
+         ORDER BY created_at ASC LIMIT 1
+       ) admin ON true
+       WHERE c.id = $1`,
+      [companyId]
+    );
+
+    if (row?.admin_email) {
+      await sendWelcomeEmail({
+        toEmail:         row.admin_email,
+        adminFirstName:  row.admin_first_name ?? 'there',
+        companyName:     row.company_name,
+        planName:        row.plan_name ?? 'your plan',
+        assessmentLimit: row.assessment_limit_monthly,
+      });
+    } else {
+      console.warn(`[billing] no company_admin found for company ${companyId} — welcome email not sent`);
+    }
+  } catch (err) {
+    console.error('[billing] welcome email failed', err);
+  }
+}
 
 // ── Subscription lifecycle ────────────────────────────────────────────────────
 

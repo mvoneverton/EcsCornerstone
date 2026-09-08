@@ -38,13 +38,16 @@ export type UserRole =
   | 'super_admin'
   | 'company_admin'
   | 'facilitator'
-  | 'respondent';
+  | 'respondent'
+  | 'manager'
+  | 'employee';
 
 export interface JwtPayload {
   sub: string;          // user id
   email: string;
   role: UserRole;
   companyId: string | null;
+  impersonatedBy?: string;  // super_admin user id, set only on impersonation tokens
   iat?: number;
   exp?: number;
 }

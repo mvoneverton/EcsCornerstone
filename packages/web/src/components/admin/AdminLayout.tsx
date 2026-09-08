@@ -2,6 +2,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../lib/auth';
 import { SidebarNav } from './SidebarNav';
+import { ImpersonationBanner } from '../ImpersonationBanner';
 import api from '../../lib/api';
 
 interface CompanyInfo {
@@ -39,6 +40,11 @@ export function AdminLayout() {
       clearAuth();
       navigate('/login', { replace: true });
     },
+  });
+
+  const portalMutation = useMutation({
+    mutationFn: () => api.post<{ url: string }>('/billing/portal').then((r) => r.data),
+    onSuccess: (data) => { window.location.href = data.url; },
   });
 
   if (!user) return null;
@@ -126,10 +132,33 @@ export function AdminLayout() {
           </div>
         </header>
 
+        <ImpersonationBanner />
+
+        {company?.subscriptionStatus === 'past_due' && (
+          <div className="flex items-center justify-between bg-amber-50 px-6 py-2.5 text-sm text-amber-800 border-b border-amber-200">
+            <span>Your subscription payment failed. Update billing to restore full access.</span>
+            <button
+              onClick={() => portalMutation.mutate()}
+              disabled={portalMutation.isPending}
+              className="rounded-md bg-amber-600 px-3 py-1 text-xs font-semibold text-white hover:bg-amber-700 transition-colors disabled:opacity-50"
+            >
+              Update Billing
+            </button>
+          </div>
+        )}
+
         {/* Page content */}
         <main className="flex-1 overflow-y-auto">
           <Outlet />
         </main>
+
+        {/* Platform footer — legal links */}
+        <footer className="flex flex-shrink-0 flex-wrap items-center justify-center gap-x-5 gap-y-1 border-t border-gray-200 bg-white px-6 py-2.5 text-xs text-gray-400">
+          <span>© {new Date().getFullYear()} Everton Consulting Services</span>
+          <a href="/legal/terms" className="hover:text-gray-600 hover:underline">Terms of Service</a>
+          <a href="/legal/privacy" className="hover:text-gray-600 hover:underline">Privacy Policy</a>
+          <a href="/legal/dpa" className="hover:text-gray-600 hover:underline">Data Processing Agreement</a>
+        </footer>
       </div>
     </div>
   );

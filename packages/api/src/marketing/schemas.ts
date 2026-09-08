@@ -49,6 +49,10 @@ export const waitlistSchema = z.object({
   email:     z.string().email('Valid email required'),
 });
 
+export const waitlistConvertSchema = z.object({
+  email: z.string().email('Valid email required'),
+});
+
 export const checkoutSessionSchema = z.object({
   agentIds:    z.array(z.string().min(1)).min(1, 'At least one agent required'),
   firstName:   z.string().min(1, 'Required'),

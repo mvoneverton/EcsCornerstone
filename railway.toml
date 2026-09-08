@@ -54,6 +54,11 @@ restartPolicyMaxRetries = 5
 #   STRIPE_PRICE_GROWTH_ANNUALLY
 #   FRONTEND_URL             ← set to the marketing service Railway URL
 #   PUPPETEER_SKIP_DOWNLOAD=true
+#   PATH_TOKEN_SECRET        ← HMAC secret for gated-service (Agent Placement /
+#                              FCAIO) 30-day access tokens; min 32 chars
+#   SENTRY_DSN_API           ← optional; backend error monitoring (Sentry)
+#   VITE_SENTRY_DSN_WEB      ← optional; must be present when packages/web is
+#                              built (baked into the SPA bundle)
 #
 # Required for marketing service:
 #   VITE_API_URL             ← set to the api service Railway URL
