@@ -178,17 +178,17 @@ export default function CornerstonePage() {
             Want Cornerstone without the full consulting engagement?
           </h2>
           <p className="text-navy-700 leading-relaxed mb-8">
-            We're building ECS Cornerstone as a standalone SaaS platform — so any organization
+            ECS Cornerstone is available as a standalone SaaS platform — so any organization
             can run the assessment and access team communication profiles independently. No
             consulting engagement required.
           </p>
           <Link
-            to="/cornerstone-saas#waitlist"
+            to="/cornerstone-saas"
             className="inline-flex items-center gap-2 px-6 py-3 rounded border border-navy-900
                        text-navy-900 text-sm font-semibold hover:bg-navy-900 hover:text-white
                        transition-colors"
           >
-            Join the waitlist <ArrowRight size={15} />
+            Get Started <ArrowRight size={15} />
           </Link>
         </div>
       </section>

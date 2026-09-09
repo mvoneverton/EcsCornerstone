@@ -1,19 +1,10 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Link } from 'react-router-dom';
 import { LayoutGrid, User, BarChart2, ArrowRight, Check } from 'lucide-react';
-import { apiPost } from '@/lib/api';
 
-// ── Form schema ───────────────────────────────────────────────────────────────
-
-const schema = z.object({
-  firstName: z.string().min(1, 'Required'),
-  email:     z.string().email('Valid email required'),
-});
-
-type FormData = z.infer<typeof schema>;
+// Platform onboarding lives on the app, not the marketing site.
+const PLATFORM_URL =
+  (import.meta.env.VITE_PLATFORM_URL as string | undefined) ??
+  'https://ecscornerstone-production.up.railway.app';
 
 // ── Static data ───────────────────────────────────────────────────────────────
 
@@ -50,61 +41,16 @@ const FOR_WHOM = [
   },
 ];
 
-// ── Field component ───────────────────────────────────────────────────────────
-
-function Field({
-  label,
-  error,
-  required = false,
-  children,
-}: {
-  label: string;
-  error?: string;
-  required?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-sm font-medium text-navy-800">
-        {label}{required && <span className="text-gold-500 ml-0.5">*</span>}
-      </label>
-      {children}
-      {error && <p className="text-xs text-red-600">{error}</p>}
-    </div>
-  );
-}
-
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function CornerstoneSaasPage() {
-  const [submitted, setSubmitted] = useState(false);
-  const [submittedName, setSubmittedName] = useState('');
-  const [serverError, setServerError] = useState('');
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<FormData>({ resolver: zodResolver(schema) });
-
-  async function onSubmit(data: FormData) {
-    setServerError('');
-    try {
-      await apiPost('/api/waitlist', data);
-      setSubmittedName(data.firstName);
-      setSubmitted(true);
-    } catch {
-      setServerError("Something went wrong. Please try again.");
-    }
-  }
-
   return (
     <div>
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <section className="bg-navy-950 px-4 sm:px-6 lg:px-8 py-24">
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-gold-400 mb-4">
-            Coming Soon
+            Now available
           </p>
           <h1 className="font-serif text-4xl sm:text-5xl text-gold-500 mb-6">
             ECS Cornerstone — Standalone Platform
@@ -116,7 +62,7 @@ export default function CornerstoneSaasPage() {
         </div>
       </section>
 
-      {/* ── What it will include ──────────────────────────────────────────── */}
+      {/* ── What it includes ──────────────────────────────────────────────── */}
       <section className="bg-white px-4 sm:px-6 lg:px-8 py-20">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
@@ -173,73 +119,23 @@ export default function CornerstoneSaasPage() {
         </div>
       </section>
 
-      {/* ── Email capture ─────────────────────────────────────────────────── */}
-      <section id="waitlist" className="bg-navy-900 px-4 sm:px-6 lg:px-8 py-20">
-        <div className="max-w-lg mx-auto">
-          {submitted ? (
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gold-500 mb-6">
-                <Check size={28} className="text-navy-950" strokeWidth={2.5} />
-              </div>
-              <h2 className="font-serif text-2xl sm:text-3xl text-white mb-4">
-                You're on the list, {submittedName}.
-              </h2>
-              <p className="text-navy-100 leading-relaxed">
-                We'll reach out as soon as ECS Cornerstone is available as a standalone platform.
-              </p>
-            </div>
-          ) : (
-            <>
-              <div className="text-center mb-10">
-                <h2 className="font-serif text-2xl sm:text-3xl text-white mb-3">
-                  Be the first to know when we launch.
-                </h2>
-                <p className="text-navy-100 text-sm leading-relaxed">
-                  We're in active development. Join the waitlist and we'll notify you at launch.
-                </p>
-              </div>
-
-              <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
-                <Field label="First Name" error={errors.firstName?.message} required>
-                  <input
-                    {...register('firstName')}
-                    placeholder="Jane"
-                    className="rounded border border-navy-600 bg-navy-800 px-4 py-2.5 text-sm
-                               text-white placeholder-navy-400 focus:outline-none focus:border-gold-500
-                               focus:ring-1 focus:ring-gold-500 transition-colors"
-                  />
-                </Field>
-
-                <Field label="Work Email" error={errors.email?.message} required>
-                  <input
-                    {...register('email')}
-                    type="email"
-                    placeholder="jane@company.com"
-                    className="rounded border border-navy-600 bg-navy-800 px-4 py-2.5 text-sm
-                               text-white placeholder-navy-400 focus:outline-none focus:border-gold-500
-                               focus:ring-1 focus:ring-gold-500 transition-colors"
-                  />
-                </Field>
-
-                {serverError && (
-                  <p className="text-sm text-red-400">{serverError}</p>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="mt-2 inline-flex items-center justify-center gap-2 px-6 py-3 rounded
-                             bg-gold-500 text-navy-950 font-semibold text-sm
-                             hover:bg-gold-400 disabled:opacity-60 disabled:cursor-not-allowed
-                             transition-colors"
-                >
-                  {isSubmitting ? 'Joining…' : (
-                    <>Join the Waitlist <ArrowRight size={15} /></>
-                  )}
-                </button>
-              </form>
-            </>
-          )}
+      {/* ── Get started ───────────────────────────────────────────────────── */}
+      <section className="bg-navy-900 px-4 sm:px-6 lg:px-8 py-20">
+        <div className="max-w-lg mx-auto text-center">
+          <h2 className="font-serif text-2xl sm:text-3xl text-white mb-8">
+            Start today.
+          </h2>
+          <a
+            href={`${PLATFORM_URL}/onboarding/register`}
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded
+                       bg-gold-500 text-navy-900 font-semibold text-sm
+                       hover:bg-gold-400 transition-colors"
+          >
+            Get Started <ArrowRight size={15} />
+          </a>
+          <p className="mt-4 text-sm text-navy-100">
+            Already on our waitlist? Use your same email — we'll recognize you.
+          </p>
         </div>
       </section>
 
