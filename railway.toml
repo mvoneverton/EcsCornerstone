@@ -6,9 +6,14 @@
 # Docs: https://docs.railway.app/reference/config-as-code
 
 # ── Service: api ─────────────────────────────────────────────────────────────
+# The api service also serves the built web SPA (see packages/api/src/index.ts,
+# production static-file block), so the build MUST compile packages/web too or
+# every non-/api route 500s with ENOENT on packages/web/dist/index.html.
+# --include=dev is required: NODE_ENV=production on this service otherwise makes
+# npm skip the devDependencies that vite/tsc need to build.
 [services.api.build]
 builder      = "nixpacks"
-buildCommand = "cd packages/api && npm run build"
+buildCommand = "npm install --include=dev --legacy-peer-deps && npm run build --workspace=packages/web && npm run build --workspace=packages/api"
 
 [services.api.deploy]
 startCommand            = "npm --prefix packages/api run db:migrate && node packages/api/dist/index.js"
@@ -59,6 +64,10 @@ restartPolicyMaxRetries = 5
 #   SENTRY_DSN_API           ← optional; backend error monitoring (Sentry)
 #   VITE_SENTRY_DSN_WEB      ← optional; must be present when packages/web is
 #                              built (baked into the SPA bundle)
+#   VITE_API_URL             ← leave UNSET on the api service so the SPA calls
+#                              the API at the same origin via a relative /api
+#                              path. If set, it must be the api service's own
+#                              public URL (it is baked into the web bundle).
 #
 # Required for marketing service:
 #   VITE_API_URL             ← set to the api service Railway URL
