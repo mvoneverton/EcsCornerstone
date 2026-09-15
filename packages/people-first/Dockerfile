@@ -1,17 +1,17 @@
-FROM node:20-alpine AS builder
+FROM node:18-alpine
 WORKDIR /app
+
 COPY package.json ./
-COPY package-lock.json ./
-RUN npm install --include=dev
+RUN npm install
+
 COPY . .
 RUN npm run build
 
-FROM node:20-alpine
-WORKDIR /app
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm install --omit=dev
-COPY --from=builder /app/dist ./dist
-COPY serve.js ./
-EXPOSE 3000
-CMD ["node", "serve.js"]
+RUN npm install -g serve
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/ || exit 1
+
+CMD ["serve", "-s", "dist", "--listen", "8080"]
