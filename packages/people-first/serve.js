@@ -58,7 +58,7 @@ app.use(express.static(path.join(__dirname, 'dist'), {
 }));
 
 // SPA fallback — all non-asset routes serve index.html
-app.get('*', (_req, res) => {
+app.use((_req, res) => {
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
