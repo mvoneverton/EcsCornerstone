@@ -13,6 +13,7 @@ import {
   listEventResults,
   getResult,
   listAllResults,
+  createTestInvitation,
 } from './handlers';
 
 const router = Router();
@@ -35,5 +36,8 @@ router.get('/events/:eventId/results',       listEventResults);
 router.get('/results',                       listAllResults);
 router.get('/results/:resultId',             getResult);
 router.post('/results/:resultId/resend-results', resendResults);
+
+// Dev/test only
+router.get('/test/create-test-invitation', createTestInvitation);
 
 export default router;

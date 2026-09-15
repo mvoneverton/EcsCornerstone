@@ -681,6 +681,47 @@ export async function listAllResults(
   }
 }
 
+// ── GET /api/pf/test/create-test-invitation (dev/test only) ─────────────────
+
+export async function createTestInvitation(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  if (process.env.NODE_ENV === 'production') {
+    res.status(404).json({ error: { message: 'Not found', code: 'NOT_FOUND' } });
+    return;
+  }
+
+  try {
+    const { rows: [event] } = await pool.query<{ id: string }>(
+      `INSERT INTO pf_events (name, event_type, facilitator_id, status, is_free)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id`,
+      ['Test Couples Night', 'couples_night', req.user!.sub, 'active', true]
+    );
+
+    const token = randomBytes(32).toString('hex');
+
+    await pool.query(
+      `INSERT INTO pf_invitations (event_id, email, first_name, last_name, token, status)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [event.id, req.user!.email, 'Test', 'Attendee', token, 'pending']
+    );
+
+    const url = process.env.VITE_PF_URL + '/assess/' + token;
+
+    res.status(201).json({
+      assessmentUrl: url,
+      token,
+      eventId: event.id,
+      message: 'Visit the assessment URL to test the People First assessment flow.',
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 // ── DTO helper ────────────────────────────────────────────────────────────────
 
 function toEventDto(
