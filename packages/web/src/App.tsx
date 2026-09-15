@@ -32,6 +32,12 @@ import CompaniesListPage     from './pages/superadmin/CompaniesListPage';
 import CompanyDetailPage     from './pages/superadmin/CompanyDetailPage';
 import AuditLogPage          from './pages/superadmin/AuditLogPage';
 
+// People First pages (Module 2)
+import PFEventsPage          from './pages/superadmin/pf/PFEventsPage';
+import PFEventDetailPage     from './pages/superadmin/pf/PFEventDetailPage';
+import PFResultDetailPage    from './pages/superadmin/pf/PFResultDetailPage';
+import PFResultsPage         from './pages/superadmin/pf/PFResultsPage';
+
 // Manager view
 import ManagerDashboard from './pages/manager/ManagerDashboard';
 
@@ -125,6 +131,12 @@ export default function App() {
             <Route path="companies"             element={<CompaniesListPage />} />
             <Route path="companies/:companyId"  element={<CompanyDetailPage />} />
             <Route path="audit-log"             element={<AuditLogPage />} />
+
+            {/* People First (Module 2) */}
+            <Route path="people-first/events"                 element={<PFEventsPage />} />
+            <Route path="people-first/events/:eventId"        element={<PFEventDetailPage />} />
+            <Route path="people-first/results"                element={<PFResultsPage />} />
+            <Route path="people-first/results/:resultId"      element={<PFResultDetailPage />} />
           </Route>
 
           {/* ── Protected manager area ──────────────────────────────── */}

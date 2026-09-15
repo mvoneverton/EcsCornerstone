@@ -19,6 +19,8 @@ import onboardingRouter from './onboarding/router';
 import superadminRouter from './superadmin/router';
 import reportsRouter    from './reports/router';
 import managerRouter    from './manager/router';
+import pfRouter         from './people-first/router';
+import pfAssessRouter   from './people-first/assessRouter';
 import { errorHandler, notFound, auditLog, generalRateLimiter } from './middleware';
 
 const app = express();
@@ -32,11 +34,13 @@ const PORT = Number(process.env.PORT) || 4000;
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3001',
+  'http://localhost:5174',
   'https://ecscornerstone-production.up.railway.app',
   'https://evertonconsultingservices.org',
   'https://www.evertonconsultingservices.org',
   process.env.FRONTEND_URL,
   process.env.MARKETING_URL,
+  process.env.PF_URL,
 ].filter(Boolean) as string[];
 
 const corsOptions: cors.CorsOptions = {
@@ -102,6 +106,8 @@ app.use('/api/onboarding', onboardingRouter);
 app.use('/api/superadmin', superadminRouter);
 app.use('/api/reports',    reportsRouter);
 app.use('/api/manager',    managerRouter);
+app.use('/api/pf',         pfRouter);
+app.use('/api/pf/assess',  pfAssessRouter);
 app.use('/api',            marketingRouter);
 
 // ── Static frontend (production only) ────────────────────────────────────────

@@ -3,10 +3,15 @@ import { useMutation } from '@tanstack/react-query';
 import { useAuth } from '../../lib/auth';
 import api from '../../lib/api';
 
-const navItems = [
+const cornerstoneNavItems = [
   { to: '/superadmin',            label: 'Dashboard',  end: true },
   { to: '/superadmin/companies',  label: 'Companies',  end: false },
   { to: '/superadmin/audit-log',  label: 'Audit Log',  end: true },
+];
+
+const pfNavItems = [
+  { to: '/superadmin/people-first/events',  label: 'Events',  end: false },
+  { to: '/superadmin/people-first/results', label: 'Results', end: false },
 ];
 
 const activeClass   = 'bg-white/10 text-white';
@@ -39,7 +44,24 @@ export function SuperAdminLayout() {
         </div>
 
         <nav className="flex flex-1 flex-col gap-1 px-3 py-4">
-          {navItems.map((item) => (
+          {cornerstoneNavItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              className={({ isActive }) => `${base} ${isActive ? activeClass : inactiveClass}`}
+            >
+              {item.label}
+            </NavLink>
+          ))}
+
+          <div className="mt-4 mb-1 border-t border-white/10 pt-4">
+            <div className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-navy-300">
+              People First
+            </div>
+          </div>
+
+          {pfNavItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
