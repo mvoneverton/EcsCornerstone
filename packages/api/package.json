@@ -14,6 +14,7 @@
     "db:seed:staging": "ts-node src/db/seed-staging.ts",
     "verify:env": "ts-node src/scripts/verifyEnvironment.ts",
     "qa:checklist": "ts-node src/scripts/generateQAChecklist.ts",
+    "seed:pf-test": "ts-node src/scripts/seedPFTestEvent.ts",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
